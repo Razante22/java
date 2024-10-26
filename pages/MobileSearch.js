@@ -1,12 +1,9 @@
 import { useState } from 'react';
-import axios from 'axios';
 
-export default function MobileSearch({ handleSearch, query, setQuery, sort, setSort }) {
-    const [error, setError] = useState('');
-
-    const onKeyDown = (event) => {
+const MobileSearch = ({ handleSearch, query, setQuery, sort, setSort }) => {
+    const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
-            event.preventDefault(); // Previne o comportamento padrão
+            event.preventDefault(); // Previne a ação padrão de 'Enter' que causa o foco em um elemento abaixo
             handleSearch(); // Chama a função de busca
         }
     };
@@ -19,7 +16,7 @@ export default function MobileSearch({ handleSearch, query, setQuery, sort, setS
                     placeholder="Digite o nome do produto"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    onKeyDown={onKeyDown} // Usar onKeyDown
+                    onKeyPress={handleKeyPress} // Adiciona o listener de teclado
                 />
                 <select value={sort} onChange={(e) => setSort(e.target.value)}>
                     <option value="relevance">Mais Vendidos</option>
@@ -29,46 +26,23 @@ export default function MobileSearch({ handleSearch, query, setQuery, sort, setS
                 <button type="submit">Buscar</button>
             </form>
 
-            {error && <div className="error">{error}</div>}
-
             <style jsx>{`
                 .mobile-search {
-                    padding: 20px;
                     display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                }
-                form {
-                    width: 100%; /* Garante que o formulário use a largura total */
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
+                    justify-content: space-between; /* Espaçamento entre input e select */
+                    align-items: center; /* Alinha itens no centro verticalmente */
+                    margin-bottom: 20px; /* Margem inferior para espaçamento */
                 }
                 input {
-                    width: 100%;
-                    padding: 10px;
-                    border-radius: 5px;
-                    border: 1px solid #ccc;
-                    box-sizing: border-box; /* Inclui padding e border no cálculo da largura */
+                    flex: 1; /* Ocupa o máximo de espaço disponível */
+                    margin-right: 10px; /* Espaço entre input e select */
                 }
                 select {
-                    padding: 10px;
-                    border-radius: 5px;
-                    border: 1px solid #ccc;
-                    width: 100%; /* Garante que o select use a largura total */
-                }
-                button {
-                    padding: 10px;
-                    border-radius: 5px;
-                    background-color: #0070f3;
-                    color: white;
-                    border: none;
-                    cursor: pointer;
-                }
-                button:hover {
-                    background-color: #005bb5;
+                    margin-right: 10px; /* Espaço entre select e botão */
                 }
             `}</style>
         </div>
     );
-}
+};
+
+export default MobileSearch;
