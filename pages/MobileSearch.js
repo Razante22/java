@@ -46,7 +46,7 @@ export default function MobileSearch() {
                     placeholder="Digite o nome do produto"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    onKeyPress={handleKeyPress}
+                    onKeyPress={handleKeyPress} // Evento para Enter
                     className="search-input"
                 />
                 <select value={sort} onChange={(e) => setSort(e.target.value)} className="sort-select">
@@ -102,6 +102,7 @@ export default function MobileSearch() {
                 }
                 .search-input, .sort-select, .search-button {
                     width: 100%;
+                    box-sizing: border-box; /* Garante que a largura seja considerada corretamente */
                 }
                 .results {
                     margin-top: 20px;
