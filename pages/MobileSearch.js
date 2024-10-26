@@ -29,25 +29,23 @@ const MobileSearch = ({ handleSearch, query, setQuery, sort, setSort }) => {
             <style jsx>{`
                 .mobile-search {
                     display: flex;
-                    justify-content: space-between; /* Espaço entre input e select */
-                    align-items: center; /* Alinha os itens verticalmente */
+                    flex-direction: column; /* Coloca os elementos em coluna */
                     margin-bottom: 20px; /* Margem inferior para espaçamento */
                 }
                 input {
-                    flex: 1; /* Ocupa o máximo de espaço disponível */
-                    margin-right: 10px; /* Espaço entre input e select */
+                    margin-bottom: 10px; /* Espaço abaixo do input */
                     padding: 10px; /* Aumenta a área clicável */
                     border: 1px solid #ccc; /* Estilo do input */
                     border-radius: 4px; /* Cantos arredondados */
                 }
                 select {
-                    margin-right: 10px; /* Espaço entre select e botão */
+                    margin-bottom: 10px; /* Espaço abaixo do select */
                     padding: 10px; /* Aumenta a área clicável */
                     border: 1px solid #ccc; /* Estilo do select */
                     border-radius: 4px; /* Cantos arredondados */
                 }
                 button {
-                    padding: 10px 20px; /* Estilo do botão */
+                    padding: 10px; /* Estilo do botão */
                     background-color: #0070f3; /* Cor do botão */
                     color: white; /* Cor do texto do botão */
                     border: none; /* Remove a borda padrão */
