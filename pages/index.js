@@ -128,7 +128,7 @@ export default function Home() {
                     border: 1px solid #333;
                     border-radius: 8px;
                     padding: 10px;
-                    width: calc(20% - 15px); /* 5 produtos em telas grandes */
+                    width: calc(19% - 15px); /* Ajusta a largura para caber 5 produtos em desktops */
                     display: flex;
                     flex-direction: column;
                     align-items: center;
@@ -170,9 +170,6 @@ export default function Home() {
                     }
                     .search-input, .sort-select, .search-button {
                         width: auto; /* Remove o limite de 100% em desktops */
-                    }
-                    .product {
-                        width: calc(19.5% - 15px); /* Ajusta a largura para caber 5 produtos em desktops */
                     }
                 }
 
