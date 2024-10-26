@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import MobileSearch from '.api/MobileSearch'; // Certifique-se de que o caminho está correto
+import MobileSearch from './MobileSearch'; // Certifique-se de que o caminho está correto
 
 export default function Home() {
     const [query, setQuery] = useState('');
