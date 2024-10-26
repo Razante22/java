@@ -9,9 +9,8 @@ export default function Home() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [error, setError] = useState('');
-    const [isMobile, setIsMobile] = useState(false); // Adicionado estado para rastrear se é móvel
+    const [isMobile, setIsMobile] = useState(false);
 
-    // Função para verificar se é dispositivo móvel
     const checkMobile = () => {
         setIsMobile(window.innerWidth <= 768);
     };
@@ -33,9 +32,9 @@ export default function Home() {
     };
 
     useEffect(() => {
-        checkMobile(); // Verifique a inicialização
-        window.addEventListener('resize', checkMobile); // Adiciona o listener
-        return () => window.removeEventListener('resize', checkMobile); // Remove o listener ao desmontar
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
     return (
