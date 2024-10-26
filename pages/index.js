@@ -117,7 +117,7 @@ export default function Home() {
                             border: 1px solid #333;
                             border-radius: 8px;
                             padding: 10px;
-                            width: calc(20% - 10px); /* 5 produtos por linha */
+                            width: calc(19% - 10px); /* 5 produtos por linha com margem */
                             display: flex;
                             flex-direction: column;
                             align-items: center;
