@@ -104,7 +104,53 @@ export default function Home() {
                         .desktop-search {
                             padding: 20px;
                         }
-                        /* Coloque aqui o restante do CSS para desktop conforme necessário */
+                        .results {
+                            margin-top: 20px;
+                        }
+                        .results ul {
+                            display: flex;
+                            flex-wrap: wrap;
+                            justify-content: space-between; /* Ajuste para espaçar produtos */
+                        }
+                        .product {
+                            background: rgba(255, 255, 255, 0.1);
+                            border: 1px solid #333;
+                            border-radius: 8px;
+                            padding: 10px;
+                            width: calc(20% - 10px); /* 5 produtos por linha */
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+                            transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+                            margin-bottom: 20px;
+                        }
+                        .product img {
+                            border-radius: 6px;
+                            margin-bottom: 10px;
+                            width: 100%;
+                            height: 180px;
+                            object-fit: cover;
+                        }
+                        .product-info {
+                            text-align: center;
+                            color: #e0e0e0;
+                        }
+                        .product-price {
+                            font-weight: bold;
+                            color: #00e5ff;
+                            margin-top: 10px;
+                        }
+                        .pagination {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            margin: 20px 0;
+                        }
+                        .pagination span {
+                            margin: 0 10px;
+                            color: #e0e0e0;
+                        }
                     `}</style>
                 </div>
             )}
