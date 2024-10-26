@@ -49,7 +49,7 @@ export default function Home() {
             </header>
 
             {isMobile ? (
-                <MobileSearch />
+                <MobileSearch handleSearch={handleSearch} query={query} setQuery={setQuery} sort={sort} setSort={setSort} />
             ) : (
                 <div className="desktop-search">
                     <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="search-form">
