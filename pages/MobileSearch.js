@@ -19,7 +19,7 @@ export default function MobileSearch({ handleSearch, query, setQuery, sort, setS
                     placeholder="Digite o nome do produto"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    onKeyPress={onKeyPress} // Adiciona o evento de tecla
+                    onKeyDown={onKeyPress} // Use onKeyDown em vez de onKeyPress
                 />
                 <select value={sort} onChange={(e) => setSort(e.target.value)}>
                     <option value="relevance">Mais Vendidos</option>
