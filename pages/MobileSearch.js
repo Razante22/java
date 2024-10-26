@@ -4,9 +4,9 @@ import axios from 'axios';
 export default function MobileSearch({ handleSearch, query, setQuery, sort, setSort }) {
     const [error, setError] = useState('');
 
-    const onKeyPress = (event) => {
+    const onKeyDown = (event) => {
         if (event.key === 'Enter') {
-            event.preventDefault(); // Previne a ação padrão do Enter
+            event.preventDefault(); // Previne o comportamento padrão
             handleSearch(); // Chama a função de busca
         }
     };
@@ -19,7 +19,7 @@ export default function MobileSearch({ handleSearch, query, setQuery, sort, setS
                     placeholder="Digite o nome do produto"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    onKeyDown={onKeyPress} // Use onKeyDown em vez de onKeyPress
+                    onKeyDown={onKeyDown} // Usar onKeyDown
                 />
                 <select value={sort} onChange={(e) => setSort(e.target.value)}>
                     <option value="relevance">Mais Vendidos</option>
@@ -34,8 +34,12 @@ export default function MobileSearch({ handleSearch, query, setQuery, sort, setS
             <style jsx>{`
                 .mobile-search {
                     padding: 20px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
                 }
                 form {
+                    width: 100%; /* Garante que o formulário use a largura total */
                     display: flex;
                     flex-direction: column;
                     gap: 10px;
@@ -45,11 +49,13 @@ export default function MobileSearch({ handleSearch, query, setQuery, sort, setS
                     padding: 10px;
                     border-radius: 5px;
                     border: 1px solid #ccc;
+                    box-sizing: border-box; /* Inclui padding e border no cálculo da largura */
                 }
                 select {
                     padding: 10px;
                     border-radius: 5px;
                     border: 1px solid #ccc;
+                    width: 100%; /* Garante que o select use a largura total */
                 }
                 button {
                     padding: 10px;
