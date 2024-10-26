@@ -121,14 +121,14 @@ export default function Home() {
                 .results ul {
                     display: flex;
                     flex-wrap: wrap;
-                    justify-content: space-between;
+                    justify-content: space-between; /* Ajusta para espaçar os produtos uniformemente */
                 }
                 .product {
                     background: rgba(255, 255, 255, 0.1);
                     border: 1px solid #333;
                     border-radius: 8px;
                     padding: 10px;
-                    width: calc(19% - 15px); /* Ajusta a largura para caber 5 produtos em desktops */
+                    width: calc(20% - 10px); /* Ajusta a largura para caber 5 produtos em desktops */
                     display: flex;
                     flex-direction: column;
                     align-items: center;
