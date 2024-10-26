@@ -1,9 +1,12 @@
 import { useState } from 'react';
+import axios from 'axios';
 
-const MobileSearch = ({ handleSearch, query, setQuery, sort, setSort }) => {
-    const handleKeyPress = (event) => {
+export default function MobileSearch({ handleSearch, query, setQuery, sort, setSort }) {
+    const [error, setError] = useState('');
+
+    const onKeyDown = (event) => {
         if (event.key === 'Enter') {
-            event.preventDefault(); // Previne a ação padrão
+            event.preventDefault(); // Previne o comportamento padrão
             handleSearch(); // Chama a função de busca
         }
     };
@@ -16,7 +19,7 @@ const MobileSearch = ({ handleSearch, query, setQuery, sort, setSort }) => {
                     placeholder="Digite o nome do produto"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    onKeyPress={handleKeyPress} // Adiciona o listener de tecla
+                    onKeyDown={onKeyDown} // Usar onKeyDown
                 />
                 <select value={sort} onChange={(e) => setSort(e.target.value)}>
                     <option value="relevance">Mais Vendidos</option>
@@ -26,35 +29,46 @@ const MobileSearch = ({ handleSearch, query, setQuery, sort, setSort }) => {
                 <button type="submit">Buscar</button>
             </form>
 
+            {error && <div className="error">{error}</div>}
+
             <style jsx>{`
                 .mobile-search {
+                    padding: 20px;
                     display: flex;
-                    flex-direction: column; /* Coloca os elementos em coluna */
-                    margin-bottom: 20px; /* Margem inferior para espaçamento */
+                    flex-direction: column;
+                    align-items: center;
+                }
+                form {
+                    width: 100%; /* Garante que o formulário use a largura total */
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
                 }
                 input {
-                    margin-bottom: 10px; /* Espaço abaixo do input */
-                    padding: 10px; /* Aumenta a área clicável */
-                    border: 1px solid #ccc; /* Estilo do input */
-                    border-radius: 4px; /* Cantos arredondados */
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 5px;
+                    border: 1px solid #ccc;
+                    box-sizing: border-box; /* Inclui padding e border no cálculo da largura */
                 }
                 select {
-                    margin-bottom: 10px; /* Espaço abaixo do select */
-                    padding: 10px; /* Aumenta a área clicável */
-                    border: 1px solid #ccc; /* Estilo do select */
-                    border-radius: 4px; /* Cantos arredondados */
+                    padding: 10px;
+                    border-radius: 5px;
+                    border: 1px solid #ccc;
+                    width: 100%; /* Garante que o select use a largura total */
                 }
                 button {
-                    padding: 10px; /* Estilo do botão */
-                    background-color: #0070f3; /* Cor do botão */
-                    color: white; /* Cor do texto do botão */
-                    border: none; /* Remove a borda padrão */
-                    border-radius: 4px; /* Cantos arredondados */
-                    cursor: pointer; /* Cursor de ponteiro ao passar sobre o botão */
+                    padding: 10px;
+                    border-radius: 5px;
+                    background-color: #0070f3;
+                    color: white;
+                    border: none;
+                    cursor: pointer;
+                }
+                button:hover {
+                    background-color: #005bb5;
                 }
             `}</style>
         </div>
     );
-};
-
-export default MobileSearch;
+}
