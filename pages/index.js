@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import MobileSearch from './MobileSearch'; // Certifique-se de que o caminho está correto
+import MobileSearch from './MobileSearch'; // Ajuste o caminho se necessário
 
 export default function Home() {
     const [query, setQuery] = useState('');
@@ -9,9 +9,12 @@ export default function Home() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [error, setError] = useState('');
+    const [isMobile, setIsMobile] = useState(false); // Adicionado estado para rastrear se é móvel
 
     // Função para verificar se é dispositivo móvel
-    const isMobile = () => window.innerWidth <= 768; // Altere o valor se necessário
+    const checkMobile = () => {
+        setIsMobile(window.innerWidth <= 768);
+    };
 
     const handleSearch = async (page = 1) => {
         try {
@@ -30,9 +33,9 @@ export default function Home() {
     };
 
     useEffect(() => {
-        const handleResize = () => setIsMobile(isMobile());
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
+        checkMobile(); // Verifique a inicialização
+        window.addEventListener('resize', checkMobile); // Adiciona o listener
+        return () => window.removeEventListener('resize', checkMobile); // Remove o listener ao desmontar
     }, []);
 
     return (
@@ -41,8 +44,14 @@ export default function Home() {
                 <h1>Buscador de Produtos do Mercado Livre</h1>
             </header>
 
-            {isMobile() ? (
-                <MobileSearch handleSearch={handleSearch} query={query} setQuery={setQuery} sort={sort} setSort={setSort} />
+            {isMobile ? (
+                <MobileSearch 
+                    handleSearch={handleSearch} 
+                    query={query} 
+                    setQuery={setQuery} 
+                    sort={sort} 
+                    setSort={setSort} 
+                />
             ) : (
                 <div className="desktop-search">
                     <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }}>
