@@ -3,24 +3,33 @@ import axios from 'axios';
 export default async function handler(req, res) {
     const { query, sort, offset = 0 } = req.query;
 
+    // Monta a URL base
+    const baseUrl = `https://api.mercadolibre.com/sites/MLB/search?q=${query}&offset=${offset}&limit=10`;
+
+    // URLs específicas para os filtros de "Mais Vendidos" por períodos
+    const urlMap = {
+        '1d': `${baseUrl}&sort=sold_quantity:desc`, // Simulação para vendas em 1 dia
+        '7d': `${baseUrl}&sort=sold_quantity:desc`, // Simulação para vendas em 7 dias
+        '30d': `${baseUrl}&sort=sold_quantity:desc`, // Simulação para vendas em 30 dias
+    };
+
     // Mapeamento das opções de ordenação
     const sortOptions = {
         'price_asc': 'price_asc',
         'price_desc': 'price_desc',
         'relevance': 'relevance',
-        '1d': 'sold_quantity:desc', // Opção para mais vendidos em 1 dia
-        '7d': 'sold_quantity:desc', // Opção para mais vendidos em 7 dias
-        '30d': 'sold_quantity:desc' // Opção para mais vendidos em 30 dias
+        '1d': urlMap['1d'],
+        '7d': urlMap['7d'],
+        '30d': urlMap['30d']
     };
 
-    // Montar a URL da requisição com base no filtro escolhido
-    const url = `https://api.mercadolibre.com/sites/MLB/search?q=${query}&sort=${sortOptions[sort] || ''}&offset=${offset}&limit=10`;
+    // Verifica se é um filtro de data específico e usa a URL mapeada
+    const url = sortOptions[sort] || `${baseUrl}&sort=${sortOptions[sort]}`;
 
     try {
         const response = await axios.get(url);
         const { results, paging } = response.data;
 
-        // Mapear os produtos para o formato desejado
         const products = results.map(product => ({
             title: product.title,
             price: product.price.toFixed(2).replace('.', ','),
@@ -28,7 +37,6 @@ export default async function handler(req, res) {
             image: product.thumbnail || 'https://via.placeholder.com/150',
         }));
 
-        // Retornar os produtos e o número total de páginas calculado
         res.status(200).json({
             products,
             totalPages: Math.ceil(paging.total / 10),
