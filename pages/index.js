@@ -64,9 +64,6 @@ export default function Home() {
                             <option value="relevance">Mais Vendidos</option>
                             <option value="price_asc">Menor Preço</option>
                             <option value="price_desc">Maior Preço</option>
-                            <option value="best_selling_1day">Mais Vendidos: 1 Dia</option>
-                            <option value="best_selling_7days">Mais Vendidos: 7 Dias</option>
-                            <option value="best_selling_30days">Mais Vendidos: 30 Dias</option>
                         </select>
                         <button type="submit">Buscar</button>
                     </form>
@@ -127,15 +124,15 @@ export default function Home() {
                 .results ul {
                     display: flex;
                     flex-wrap: wrap;
-                    gap: 10px; /* Ajuste a distância entre os produtos */
-                    justify-content: center; /* Centraliza os produtos */
+                    gap: 10px; 
+                    justify-content: center; 
                 }
                 .product {
                     background: rgba(255, 255, 255, 0.1);
                     border: 1px solid #333;
                     border-radius: 8px;
                     padding: 15px;
-                    width: 180px; /* Ajuste o tamanho para caber 5 produtos em linha */
+                    width: 180px; 
                     display: flex;
                     flex-direction: column;
                     align-items: center;
@@ -172,3 +169,4 @@ export default function Home() {
         </div>
     );
 }
+
