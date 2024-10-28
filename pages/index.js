@@ -18,7 +18,7 @@ export default function Home() {
     const handleSearch = async (page = 1) => {
         try {
             const offset = (page - 1) * 10;
-            const response = await axios.get(`/api/search`, {
+            const response = await axios.get('/api/search', {
                 params: { query, sort, offset },
             });
             setProducts(response.data.products);
@@ -64,6 +64,9 @@ export default function Home() {
                             <option value="relevance">Mais Vendidos</option>
                             <option value="price_asc">Menor Preço</option>
                             <option value="price_desc">Maior Preço</option>
+                            <option value="best_selling_1day">Mais Vendidos: 1 Dia</option>
+                            <option value="best_selling_7days">Mais Vendidos: 7 Dias</option>
+                            <option value="best_selling_30days">Mais Vendidos: 30 Dias</option>
                         </select>
                         <button type="submit">Buscar</button>
                     </form>
