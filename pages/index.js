@@ -18,7 +18,7 @@ export default function Home() {
     const handleSearch = async (page = 1) => {
         try {
             const offset = (page - 1) * 10;
-            const response = await axios.get(`/api/search`, {
+            const response = await axios.get(/api/search, {
                 params: { query, sort, offset },
             });
             setProducts(response.data.products);
@@ -103,7 +103,7 @@ export default function Home() {
                 )}
             </div>
 
-            <style jsx>{`
+            <style jsx>{
                 .container {
                     padding: 20px;
                 }
@@ -124,15 +124,15 @@ export default function Home() {
                 .results ul {
                     display: flex;
                     flex-wrap: wrap;
-                    gap: 10px;
-                    justify-content: center;
+                    gap: 10px; /* Ajuste a distância entre os produtos */
+                    justify-content: center; /* Centraliza os produtos */
                 }
                 .product {
                     background: rgba(255, 255, 255, 0.1);
                     border: 1px solid #333;
                     border-radius: 8px;
                     padding: 15px;
-                    width: 180px;
+                    width: 180px; /* Ajuste o tamanho para caber 5 produtos em linha */
                     display: flex;
                     flex-direction: column;
                     align-items: center;
@@ -165,7 +165,8 @@ export default function Home() {
                     margin: 0 10px;
                     color: #e0e0e0;
                 }
-            `}</style>
+            }</style>
         </div>
     );
 }
+
