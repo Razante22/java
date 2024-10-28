@@ -6,10 +6,11 @@ export default async function handler(req, res) {
     const sortOptions = {
         'price_asc': 'price_asc',
         'price_desc': 'price_desc',
-        'relevance': 'best_selling',
+        'relevance': 'relevance', // Mantido como 'relevance'
     };
 
-    const url = https://api.mercadolibre.com/sites/MLB/search?q=${query}&sort=${sortOptions[sort] || ''}&offset=${offset || 0}&limit=10;
+    // Construa a URL corretamente com template literals
+    const url = `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(query)}&sort=${sortOptions[sort] || 'relevance'}&offset=${offset || 0}&limit=10`;
 
     try {
         const response = await axios.get(url);
@@ -27,7 +28,7 @@ export default async function handler(req, res) {
             totalPages: Math.ceil(paging.total / 10),
         });
     } catch (error) {
-        console.error(error);
+        console.error('Erro ao buscar produtos:', error);
         res.status(500).json({ error: 'Erro ao buscar produtos.' });
     }
 }
