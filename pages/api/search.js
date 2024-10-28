@@ -9,7 +9,33 @@ export default async function handler(req, res) {
         'relevance': 'best_selling',
     };
 
-    const url = `https://api.mercadolibre.com/sites/MLB/search?q=${query}&sort=${sortOptions[sort] || ''}&offset=${offset || 0}&limit=10`;
+    const now = new Date();
+    let filterDate;
+
+    // Adiciona um filtro de data baseado no sort selecionado
+    switch (sort) {
+        case 'best_selling_1d':
+            filterDate = new Date(now);
+            filterDate.setDate(now.getDate() - 1);
+            break;
+        case 'best_selling_7d':
+            filterDate = new Date(now);
+            filterDate.setDate(now.getDate() - 7);
+            break;
+        case 'best_selling_30d':
+            filterDate = new Date(now);
+            filterDate.setDate(now.getDate() - 30);
+            break;
+        default:
+            filterDate = null;
+            break;
+    }
+
+    // Formata a data para o padrão YYYY-MM-DD
+    const formattedDate = filterDate ? filterDate.toISOString().split('T')[0] : null;
+    const dateFilter = formattedDate ? `&since=${formattedDate}` : '';
+
+    const url = `https://api.mercadolibre.com/sites/MLB/search?q=${query}&sort=${sortOptions[sort] || ''}${dateFilter}&offset=${offset || 0}&limit=10`;
 
     try {
         const response = await axios.get(url);
