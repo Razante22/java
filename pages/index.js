@@ -18,7 +18,7 @@ export default function Home() {
     const handleSearch = async (page = 1) => {
         try {
             const offset = (page - 1) * 10;
-            const response = await axios.get(/api/search, {
+            const response = await axios.get(`/api/search`, {
                 params: { query, sort, offset },
             });
             setProducts(response.data.products);
@@ -103,7 +103,7 @@ export default function Home() {
                 )}
             </div>
 
-            <style jsx>{
+            <style jsx>{`
                 .container {
                     padding: 20px;
                 }
@@ -165,8 +165,7 @@ export default function Home() {
                     margin: 0 10px;
                     color: #e0e0e0;
                 }
-            }</style>
+            `}</style>
         </div>
     );
 }
-
