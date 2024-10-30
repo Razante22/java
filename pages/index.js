@@ -79,6 +79,10 @@ export default function Home() {
                             <img src={product.image} alt={product.title} />
                             <div className="product-info">
                                 <h3>{product.title}</h3>
+                                <p className="product-dates">
+                                    Criado em: {product.dateCreated}<br />
+                                    Atualizado em: {product.lastUpdated}
+                                </p>
                                 <p className="product-price">R$ {product.price}</p>
                                 <a href={product.link} target="_blank" rel="noopener noreferrer">
                                     Ver Produto
@@ -150,6 +154,11 @@ export default function Home() {
                     text-align: center;
                     color: #e0e0e0;
                 }
+                .product-dates {
+                    font-size: 0.9em;
+                    color: #bdbdbd;
+                    margin: 5px 0;
+                }
                 .product-price {
                     font-weight: bold;
                     color: #00e5ff;
@@ -169,4 +178,3 @@ export default function Home() {
         </div>
     );
 }
-
