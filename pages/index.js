@@ -22,11 +22,16 @@ export default function Home() {
             const response = await axios.get('/api/search', {
                 params: { query, sort, offset },
             });
-            setProducts(response.data.products);
+            // Modifique esta parte para incluir a classe de subtítulo
+            const productsWithSubtitle = response.data.products.map(product => ({
+                ...product,
+                subtitle: product.subtitle || 'Informação não disponível' // Ajuste aqui conforme a estrutura real
+            }));
+            setProducts(productsWithSubtitle);
             setTotalPages(response.data.totalPages);
             setCurrentPage(page);
             setError('');
-            setCurrentImageIndexes({}); // Resetar índices de imagens ao buscar novos produtos
+            setCurrentImageIndexes({});
         } catch (error) {
             console.error('Erro ao buscar produtos:', error);
             setError('Erro ao buscar produtos. Tente novamente.');
@@ -91,7 +96,7 @@ export default function Home() {
             <div className="results">
                 <ul>
                     {products.map((product, index) => {
-                        const currentIndex = currentImageIndexes[index] || 0; // Obter o índice atual da imagem
+                        const currentIndex = currentImageIndexes[index] || 0;
                         return (
                             <li key={index} className="product">
                                 <div className="image-carousel">
@@ -102,7 +107,7 @@ export default function Home() {
                                 <div className="product-info">
                                     <h3>{product.title}</h3>
                                     <p className="product-price">R$ {product.price}</p>
-                                    <p>{product.subtitle}</p> {/* Adicionando a linha para mostrar o subtitle */}
+                                    <p>{product.subtitle}</p> {/* Exibe o subtítulo com informações */}
                                     <p>Quantidade Vendida: {product.soldText}</p>
                                     <p>Criado em: {product.dateCreated}</p>
                                     <p>Última Atualização: {product.lastUpdated}</p>
@@ -183,9 +188,9 @@ export default function Home() {
                 }
                 .image-carousel img {
                     width: 220px;
-                    height: 220px; /* Altura fixada para uniformidade */
+                    height: 220px;
                     border-radius: 6px;
-                    object-fit: cover; /* Mantém a proporção da imagem */
+                    object-fit: cover;
                 }
                 .product-info {
                     text-align: center;
