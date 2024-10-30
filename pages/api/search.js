@@ -3,56 +3,31 @@ import axios from 'axios';
 export default async function handler(req, res) {
     const { query, sort, offset } = req.query;
 
-    const sortOptions = {
-        'price_asc': 'price_asc',
-        'price_desc': 'price_desc',
-        'relevance': 'relevance',
-    };
-
-    const url = `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(query)}&sort=${sortOptions[sort] || 'relevance'}&offset=${offset || 0}&limit=10`;
-
     try {
-        const response = await axios.get(url);
-        const { results, paging } = response.data;
+        const response = await axios.get(`https://api.mercadolibre.com/sites/MLB/search`, {
+            params: {
+                q: query,
+                sort: sort,
+                offset: offset,
+                limit: 10,
+            },
+        });
 
-        const products = await Promise.all(results.map(async (product) => {
-            try {
-                const productDetails = await axios.get(`https://api.mercadolibre.com/items/${product.id}`);
-                const { sold_quantity, pictures, date_created, last_updated } = productDetails.data;
-
-                // Formatação do texto de vendas
-                const soldText = sold_quantity > 10 ? `+${Math.floor(sold_quantity / 10) * 10} vendidos` : `${sold_quantity} vendidos`;
-                const subtitle = product.subtitle || 'N/A'; // Pegando o subtitle se existir
-
-                return {
-                    title: product.title,
-                    price: product.price.toFixed(2).replace('.', ','),
-                    link: product.permalink,
-                    soldText: soldText,
-                    images: pictures.map((pic) => pic.secure_url),
-                    dateCreated: new Date(date_created).toLocaleDateString(),
-                    lastUpdated: new Date(last_updated).toLocaleDateString(),
-                    subtitle: subtitle, // Incluindo subtitle
-                };
-            } catch (error) {
-                console.error(`Erro ao obter detalhes do produto ID: ${product.id}`, error);
-                return {
-                    title: product.title,
-                    price: product.price.toFixed(2).replace('.', ','),
-                    link: product.permalink,
-                    soldText: 'N/A',
-                    images: [],
-                    dateCreated: 'N/A',
-                    lastUpdated: 'N/A',
-                    subtitle: 'N/A', // Caso ocorra erro, o subtitle será N/A
-                };
-            }
+        // Extraindo os dados dos produtos
+        const products = response.data.results.map(item => ({
+            title: item.title,
+            price: item.price,
+            images: item.images,
+            link: item.permalink,
+            soldText: item.sold_quantity > 0 ? `+${item.sold_quantity} vendidos` : 'Nenhum vendido',
+            subtitle: item.condition === 'new' ? 'Novo' : 'Usado', // Ajuste para mostrar "Novo" ou "Usado"
+            dateCreated: item.date_created, // Data de criação
+            lastUpdated: item.last_updated, // Última atualização
         }));
 
-        res.status(200).json({
-            products,
-            totalPages: Math.ceil(paging.total / 10),
-        });
+        const totalPages = Math.ceil(response.data.paging.total / 10);
+
+        res.status(200).json({ products, totalPages });
     } catch (error) {
         console.error('Erro ao buscar produtos:', error);
         res.status(500).json({ error: 'Erro ao buscar produtos.' });
