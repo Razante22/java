@@ -22,6 +22,7 @@ export default async function handler(req, res) {
 
                 // Formatação do texto de vendas
                 const soldText = sold_quantity > 10 ? `+${Math.floor(sold_quantity / 10) * 10} vendidos` : `${sold_quantity} vendidos`;
+                const subtitle = product.subtitle || 'N/A'; // Pegando o subtitle se existir
 
                 return {
                     title: product.title,
@@ -31,6 +32,7 @@ export default async function handler(req, res) {
                     images: pictures.map((pic) => pic.secure_url),
                     dateCreated: new Date(date_created).toLocaleDateString(),
                     lastUpdated: new Date(last_updated).toLocaleDateString(),
+                    subtitle: subtitle, // Incluindo subtitle
                 };
             } catch (error) {
                 console.error(`Erro ao obter detalhes do produto ID: ${product.id}`, error);
@@ -42,6 +44,7 @@ export default async function handler(req, res) {
                     images: [],
                     dateCreated: 'N/A',
                     lastUpdated: 'N/A',
+                    subtitle: 'N/A', // Caso ocorra erro, o subtitle será N/A
                 };
             }
         }));
