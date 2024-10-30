@@ -16,18 +16,33 @@ export default async function handler(req, res) {
         const { results, paging } = response.data;
 
         const products = await Promise.all(results.map(async (product) => {
-            const productDetails = await axios.get(`https://api.mercadolibre.com/items/${product.id}`);
-            const { sold_quantity, pictures, date_created, last_updated } = productDetails.data;
+            try {
+                const productDetails = await axios.get(`https://api.mercadolibre.com/items/${product.id}`);
+                const { sold_quantity, pictures, date_created, last_updated } = productDetails.data;
 
-            return {
-                title: product.title,
-                price: product.price.toFixed(2).replace('.', ','),
-                link: product.permalink,
-                soldQuantity: sold_quantity,
-                images: pictures.map((pic) => pic.secure_url), // Todas as imagens do produto
-                dateCreated: new Date(date_created).toLocaleDateString(),
-                lastUpdated: new Date(last_updated).toLocaleDateString(),
-            };
+                console.log(`Produto ID: ${product.id}, Quantidade Vendida: ${sold_quantity}`); // Log para verificação
+
+                return {
+                    title: product.title,
+                    price: product.price.toFixed(2).replace('.', ','),
+                    link: product.permalink,
+                    soldQuantity: sold_quantity,
+                    images: pictures.map((pic) => pic.secure_url),
+                    dateCreated: new Date(date_created).toLocaleDateString(),
+                    lastUpdated: new Date(last_updated).toLocaleDateString(),
+                };
+            } catch (error) {
+                console.error(`Erro ao obter detalhes do produto ID: ${product.id}`, error);
+                return {
+                    title: product.title,
+                    price: product.price.toFixed(2).replace('.', ','),
+                    link: product.permalink,
+                    soldQuantity: null, // Definir como null caso falhe a requisição de detalhes
+                    images: [],
+                    dateCreated: 'N/A',
+                    lastUpdated: 'N/A',
+                };
+            }
         }));
 
         res.status(200).json({
@@ -39,3 +54,4 @@ export default async function handler(req, res) {
         res.status(500).json({ error: 'Erro ao buscar produtos.' });
     }
 }
+
