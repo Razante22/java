@@ -10,6 +10,7 @@ export default function Home() {
     const [totalPages, setTotalPages] = useState(0);
     const [error, setError] = useState('');
     const [isMobile, setIsMobile] = useState(false);
+    const [currentImageIndexes, setCurrentImageIndexes] = useState({});
 
     const checkMobile = () => {
         setIsMobile(window.innerWidth <= 768);
@@ -25,6 +26,7 @@ export default function Home() {
             setTotalPages(response.data.totalPages);
             setCurrentPage(page);
             setError('');
+            setCurrentImageIndexes({}); // Resetar índices de imagens ao buscar novos produtos
         } catch (error) {
             console.error('Erro ao buscar produtos:', error);
             setError('Erro ao buscar produtos. Tente novamente.');
@@ -36,6 +38,20 @@ export default function Home() {
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
+
+    const handleNextImage = (index) => {
+        setCurrentImageIndexes((prev) => ({
+            ...prev,
+            [index]: (prev[index] || 0) + 1,
+        }));
+    };
+
+    const handlePrevImage = (index) => {
+        setCurrentImageIndexes((prev) => ({
+            ...prev,
+            [index]: (prev[index] || 0) - 1 < 0 ? products[index].images.length - 1 : prev[index] - 1,
+        }));
+    };
 
     return (
         <div className="container">
@@ -74,25 +90,29 @@ export default function Home() {
 
             <div className="results">
                 <ul>
-                    {products.map((product, index) => (
-                        <li key={index} className="product">
-                            <div className="image-carousel">
-                                {product.images.map((img, idx) => (
-                                    <img key={idx} src={img} alt={`Imagem ${idx + 1} de ${product.title}`} />
-                                ))}
-                            </div>
-                            <div className="product-info">
-                                <h3>{product.title}</h3>
-                                <p className="product-price">R$ {product.price}</p>
-                                <p>Quantidade Vendida: {product.soldQuantity}</p>
-                                <p>Criado em: {product.dateCreated}</p>
-                                <p>Última Atualização: {product.lastUpdated}</p>
-                                <a href={product.link} target="_blank" rel="noopener noreferrer">
-                                    Ver Produto
-                                </a>
-                            </div>
-                        </li>
-                    ))}
+                    {products.map((product, index) => {
+                        const currentIndex = currentImageIndexes[index] || 0; // Obter o índice atual da imagem
+                        return (
+                            <li key={index} className="product">
+                                <div className="image-carousel">
+                                    <button className="carousel-button left" onClick={() => handlePrevImage(index)}>&lt;</button>
+                                    <img src={product.images[currentIndex]} alt={`Imagem de ${product.title}`} />
+                                    <button className="carousel-button right" onClick={() => handleNextImage(index)}>&gt;</button>
+                                </div>
+                                <div className="product-info">
+                                    <h3>{product.title}</h3>
+                                    <p className="product-price">R$ {product.price}</p>
+                                    <p>{product.subtitle}</p> {/* Adicionando a linha para mostrar o subtitle */}
+                                    <p>Quantidade Vendida: {product.soldText}</p>
+                                    <p>Criado em: {product.dateCreated}</p>
+                                    <p>Última Atualização: {product.lastUpdated}</p>
+                                    <a href={product.link} target="_blank" rel="noopener noreferrer">
+                                        Ver Produto
+                                    </a>
+                                </div>
+                            </li>
+                        );
+                    })}
                 </ul>
             </div>
 
@@ -148,16 +168,24 @@ export default function Home() {
                 }
                 .image-carousel {
                     display: flex;
-                    overflow-x: scroll;
+                    align-items: center;
                     width: 100%;
-                    scroll-snap-type: x mandatory;
+                }
+                .carousel-button {
+                    background: none;
+                    border: none;
+                    color: #e0e0e0;
+                    font-size: 24px;
+                    cursor: pointer;
+                }
+                .carousel-button:hover {
+                    color: #00e5ff;
                 }
                 .image-carousel img {
                     width: 220px;
-                    height: auto;
+                    height: 220px; /* Altura fixada para uniformidade */
                     border-radius: 6px;
-                    scroll-snap-align: start;
-                    margin-right: 10px;
+                    object-fit: cover; /* Mantém a proporção da imagem */
                 }
                 .product-info {
                     text-align: center;
