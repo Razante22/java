@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     const sortOptions = {
         'price_asc': 'price_asc',
         'price_desc': 'price_desc',
-        'relevance': 'relevance', // Mantido como 'relevance'
+        'relevance': 'relevance',
     };
 
     const url = `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(query)}&sort=${sortOptions[sort] || 'relevance'}&offset=${offset || 0}&limit=10`;
@@ -15,25 +15,23 @@ export default async function handler(req, res) {
         const response = await axios.get(url);
         const { results, paging } = response.data;
 
-        // Obter detalhes adicionais para cada produto
-        const productDetails = await Promise.all(results.map(async (product) => {
-            const detailsUrl = `https://api.mercadolibre.com/items/${product.id}`;
-            const productDetailsResponse = await axios.get(detailsUrl);
-
-            const { date_created, last_updated } = productDetailsResponse.data;
+        const products = await Promise.all(results.map(async (product) => {
+            const productDetails = await axios.get(`https://api.mercadolibre.com/items/${product.id}`);
+            const { sold_quantity, pictures, date_created, last_updated } = productDetails.data;
 
             return {
                 title: product.title,
                 price: product.price.toFixed(2).replace('.', ','),
                 link: product.permalink,
-                image: product.thumbnail || 'https://via.placeholder.com/150',
-                dateCreated: new Date(date_created).toLocaleDateString('pt-BR'),
-                lastUpdated: new Date(last_updated).toLocaleDateString('pt-BR'),
+                soldQuantity: sold_quantity,
+                images: pictures.map((pic) => pic.secure_url), // Todas as imagens do produto
+                dateCreated: new Date(date_created).toLocaleDateString(),
+                lastUpdated: new Date(last_updated).toLocaleDateString(),
             };
         }));
 
         res.status(200).json({
-            products: productDetails,
+            products,
             totalPages: Math.ceil(paging.total / 10),
         });
     } catch (error) {
