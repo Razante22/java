@@ -74,46 +74,25 @@ export default function Home() {
 
             <div className="results">
                 <ul>
-                    {products.map((product, index) => {
-                        const [currentImage, setCurrentImage] = useState(0);
-                        
-                        const handleNextImage = () => {
-                            setCurrentImage((currentImage + 1) % product.images.length);
-                        };
-
-                        const handlePreviousImage = () => {
-                            setCurrentImage(
-                                (currentImage - 1 + product.images.length) % product.images.length
-                            );
-                        };
-
-                        return (
-                            <li key={index} className="product">
-                                <div className="image-carousel">
-                                    <button className="carousel-btn left" onClick={handlePreviousImage}>
-                                        &#10094;
-                                    </button>
-                                    <img
-                                        src={product.images[currentImage]}
-                                        alt={`Imagem ${currentImage + 1} de ${product.title}`}
-                                    />
-                                    <button className="carousel-btn right" onClick={handleNextImage}>
-                                        &#10095;
-                                    </button>
-                                </div>
-                                <div className="product-info">
-                                    <h3>{product.title}</h3>
-                                    <p className="product-price">R$ {product.price}</p>
-                                    <p>Quantidade Vendida: {product.soldQuantity}</p>
-                                    <p>Criado em: {product.dateCreated}</p>
-                                    <p>Última Atualização: {product.lastUpdated}</p>
-                                    <a href={product.link} target="_blank" rel="noopener noreferrer">
-                                        Ver Produto
-                                    </a>
-                                </div>
-                            </li>
-                        );
-                    })}
+                    {products.map((product, index) => (
+                        <li key={index} className="product">
+                            <div className="image-carousel">
+                                {product.images.map((img, idx) => (
+                                    <img key={idx} src={img} alt={`Imagem ${idx + 1} de ${product.title}`} />
+                                ))}
+                            </div>
+                            <div className="product-info">
+                                <h3>{product.title}</h3>
+                                <p className="product-price">R$ {product.price}</p>
+                                <p>Quantidade Vendida: {product.soldQuantity}</p>
+                                <p>Criado em: {product.dateCreated}</p>
+                                <p>Última Atualização: {product.lastUpdated}</p>
+                                <a href={product.link} target="_blank" rel="noopener noreferrer">
+                                    Ver Produto
+                                </a>
+                            </div>
+                        </li>
+                    ))}
                 </ul>
             </div>
 
@@ -168,34 +147,17 @@ export default function Home() {
                     transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
                 }
                 .image-carousel {
-                    position: relative;
-                    width: 220px;
-                    height: 220px;
+                    display: flex;
+                    overflow-x: scroll;
+                    width: 100%;
+                    scroll-snap-type: x mandatory;
                 }
                 .image-carousel img {
-                    width: 100%;
-                    height: 100%;
+                    width: 220px;
+                    height: auto;
                     border-radius: 6px;
-                    object-fit: cover;
-                }
-                .carousel-btn {
-                    position: absolute;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    background: rgba(0, 0, 0, 0.5);
-                    color: white;
-                    border: none;
-                    padding: 8px;
-                    cursor: pointer;
-                    border-radius: 50%;
-                    font-size: 16px;
-                    z-index: 1;
-                }
-                .carousel-btn.left {
-                    left: 5px;
-                }
-                .carousel-btn.right {
-                    right: 5px;
+                    scroll-snap-align: start;
+                    margin-right: 10px;
                 }
                 .product-info {
                     text-align: center;
