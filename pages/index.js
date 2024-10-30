@@ -76,11 +76,17 @@ export default function Home() {
                 <ul>
                     {products.map((product, index) => (
                         <li key={index} className="product">
-                            <ImageCarousel images={product.images} />
+                            <div className="image-carousel">
+                                {product.images.map((img, idx) => (
+                                    <img key={idx} src={img} alt={`Imagem ${idx + 1} de ${product.title}`} />
+                                ))}
+                            </div>
                             <div className="product-info">
                                 <h3>{product.title}</h3>
                                 <p className="product-price">R$ {product.price}</p>
-                                <p>Quantidade Vendida: +{product.soldQuantity} vendidos</p>
+                                <p>Quantidade Vendida: {product.soldQuantity}</p>
+                                <p>Criado em: {product.dateCreated}</p>
+                                <p>Última Atualização: {product.lastUpdated}</p>
                                 <a href={product.link} target="_blank" rel="noopener noreferrer">
                                     Ver Produto
                                 </a>
@@ -140,6 +146,19 @@ export default function Home() {
                     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
                     transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
                 }
+                .image-carousel {
+                    display: flex;
+                    overflow-x: scroll;
+                    width: 100%;
+                    scroll-snap-type: x mandatory;
+                }
+                .image-carousel img {
+                    width: 220px;
+                    height: auto;
+                    border-radius: 6px;
+                    scroll-snap-align: start;
+                    margin-right: 10px;
+                }
                 .product-info {
                     text-align: center;
                     color: #e0e0e0;
@@ -158,47 +177,6 @@ export default function Home() {
                 .pagination span {
                     margin: 0 10px;
                     color: #e0e0e0;
-                }
-            `}</style>
-        </div>
-    );
-}
-
-function ImageCarousel({ images }) {
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-    const handleNextImage = () => {
-        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    };
-
-    const handlePreviousImage = () => {
-        setCurrentImageIndex((prevIndex) =>
-            prevIndex === 0 ? images.length - 1 : prevIndex - 1
-        );
-    };
-
-    return (
-        <div className="image-carousel">
-            <button onClick={handlePreviousImage}>◀</button>
-            <img src={images[currentImageIndex]} alt={`Imagem ${currentImageIndex + 1}`} />
-            <button onClick={handleNextImage}>▶</button>
-            <style jsx>{`
-                .image-carousel {
-                    display: flex;
-                    align-items: center;
-                    gap: 5px;
-                    width: 100%;
-                }
-                .image-carousel img {
-                    max-width: 100%;
-                    border-radius: 6px;
-                }
-                .image-carousel button {
-                    background: none;
-                    border: none;
-                    color: #fff;
-                    font-size: 1.5rem;
-                    cursor: pointer;
                 }
             `}</style>
         </div>
