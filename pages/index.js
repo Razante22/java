@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import Slider from 'react-slick';
 import MobileSearch from './MobileSearch';
 
 export default function Home() {
@@ -37,14 +36,6 @@ export default function Home() {
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
-
-    const sliderSettings = {
-        dots: true,
-        infinite: false,
-        speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-    };
 
     return (
         <div className="container">
@@ -85,17 +76,11 @@ export default function Home() {
                 <ul>
                     {products.map((product, index) => (
                         <li key={index} className="product">
-                            <Slider {...sliderSettings}>
-                                {product.images.map((image, i) => (
-                                    <div key={i}>
-                                        <img src={image} alt={`${product.title} imagem ${i+1}`} />
-                                    </div>
-                                ))}
-                            </Slider>
+                            <ImageCarousel images={product.images} />
                             <div className="product-info">
                                 <h3>{product.title}</h3>
-                                <p>{product.soldText}</p> {/* Mostra a quantidade de vendidos */}
                                 <p className="product-price">R$ {product.price}</p>
+                                <p>Quantidade Vendida: +{product.soldQuantity} vendidos</p>
                                 <a href={product.link} target="_blank" rel="noopener noreferrer">
                                     Ver Produto
                                 </a>
@@ -120,7 +105,101 @@ export default function Home() {
             </div>
 
             <style jsx>{`
-                /* Seu estilo */
+                .container {
+                    padding: 20px;
+                }
+                header {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+                h1 {
+                    color: #e0e0e0;
+                    margin: 0;
+                }
+                .desktop-search {
+                    margin-bottom: 20px;
+                }
+                .results {
+                    margin-top: 20px;
+                }
+                .results ul {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                    justify-content: center;
+                }
+                .product {
+                    background: rgba(255, 255, 255, 0.1);
+                    border: 1px solid #333;
+                    border-radius: 8px;
+                    padding: 15px;
+                    width: 220px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+                    transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+                }
+                .product-info {
+                    text-align: center;
+                    color: #e0e0e0;
+                }
+                .product-price {
+                    font-weight: bold;
+                    color: #00e5ff;
+                    margin-top: 10px;
+                }
+                .pagination {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin: 20px 0;
+                }
+                .pagination span {
+                    margin: 0 10px;
+                    color: #e0e0e0;
+                }
+            `}</style>
+        </div>
+    );
+}
+
+function ImageCarousel({ images }) {
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    const handleNextImage = () => {
+        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+    };
+
+    const handlePreviousImage = () => {
+        setCurrentImageIndex((prevIndex) =>
+            prevIndex === 0 ? images.length - 1 : prevIndex - 1
+        );
+    };
+
+    return (
+        <div className="image-carousel">
+            <button onClick={handlePreviousImage}>◀</button>
+            <img src={images[currentImageIndex]} alt={`Imagem ${currentImageIndex + 1}`} />
+            <button onClick={handleNextImage}>▶</button>
+            <style jsx>{`
+                .image-carousel {
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                    width: 100%;
+                }
+                .image-carousel img {
+                    max-width: 100%;
+                    border-radius: 6px;
+                }
+                .image-carousel button {
+                    background: none;
+                    border: none;
+                    color: #fff;
+                    font-size: 1.5rem;
+                    cursor: pointer;
+                }
             `}</style>
         </div>
     );
