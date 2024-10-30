@@ -9,22 +9,31 @@ export default async function handler(req, res) {
         'relevance': 'relevance', // Mantido como 'relevance'
     };
 
-    // Construa a URL corretamente com template literals
     const url = `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(query)}&sort=${sortOptions[sort] || 'relevance'}&offset=${offset || 0}&limit=10`;
 
     try {
         const response = await axios.get(url);
         const { results, paging } = response.data;
 
-        const products = results.map(product => ({
-            title: product.title,
-            price: product.price.toFixed(2).replace('.', ','),
-            link: product.permalink,
-            image: product.thumbnail || 'https://via.placeholder.com/150',
+        // Obter detalhes adicionais para cada produto
+        const productDetails = await Promise.all(results.map(async (product) => {
+            const detailsUrl = `https://api.mercadolibre.com/items/${product.id}`;
+            const productDetailsResponse = await axios.get(detailsUrl);
+
+            const { date_created, last_updated } = productDetailsResponse.data;
+
+            return {
+                title: product.title,
+                price: product.price.toFixed(2).replace('.', ','),
+                link: product.permalink,
+                image: product.thumbnail || 'https://via.placeholder.com/150',
+                dateCreated: new Date(date_created).toLocaleDateString('pt-BR'),
+                lastUpdated: new Date(last_updated).toLocaleDateString('pt-BR'),
+            };
         }));
 
         res.status(200).json({
-            products,
+            products: productDetails,
             totalPages: Math.ceil(paging.total / 10),
         });
     } catch (error) {
