@@ -20,13 +20,14 @@ export default async function handler(req, res) {
                 const productDetails = await axios.get(`https://api.mercadolibre.com/items/${product.id}`);
                 const { sold_quantity, pictures, date_created, last_updated } = productDetails.data;
 
-                console.log(`Produto ID: ${product.id}, Quantidade Vendida: ${sold_quantity}`); // Log para verificação
+                // Formatação do texto de vendas
+                const soldText = sold_quantity > 10 ? `+${Math.floor(sold_quantity / 10) * 10} vendidos` : `${sold_quantity} vendidos`;
 
                 return {
                     title: product.title,
                     price: product.price.toFixed(2).replace('.', ','),
                     link: product.permalink,
-                    soldQuantity: sold_quantity,
+                    soldText: soldText,
                     images: pictures.map((pic) => pic.secure_url),
                     dateCreated: new Date(date_created).toLocaleDateString(),
                     lastUpdated: new Date(last_updated).toLocaleDateString(),
@@ -37,7 +38,7 @@ export default async function handler(req, res) {
                     title: product.title,
                     price: product.price.toFixed(2).replace('.', ','),
                     link: product.permalink,
-                    soldQuantity: null, // Definir como null caso falhe a requisição de detalhes
+                    soldText: 'N/A',
                     images: [],
                     dateCreated: 'N/A',
                     lastUpdated: 'N/A',
@@ -54,4 +55,3 @@ export default async function handler(req, res) {
         res.status(500).json({ error: 'Erro ao buscar produtos.' });
     }
 }
-
