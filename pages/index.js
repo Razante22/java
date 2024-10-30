@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import MobileSearch from './MobileSearch'; // Ajuste o caminho se necessário
+import MobileSearch from './MobileSearch';
 
 export default function Home() {
     const [query, setQuery] = useState('');
@@ -76,14 +76,17 @@ export default function Home() {
                 <ul>
                     {products.map((product, index) => (
                         <li key={index} className="product">
-                            <img src={product.image} alt={product.title} />
+                            <div className="image-carousel">
+                                {product.images.map((img, idx) => (
+                                    <img key={idx} src={img} alt={`Imagem ${idx + 1} de ${product.title}`} />
+                                ))}
+                            </div>
                             <div className="product-info">
                                 <h3>{product.title}</h3>
-                                <p className="product-dates">
-                                    Criado em: {product.dateCreated}<br />
-                                    Atualizado em: {product.lastUpdated}
-                                </p>
                                 <p className="product-price">R$ {product.price}</p>
+                                <p>Quantidade Vendida: {product.soldQuantity}</p>
+                                <p>Criado em: {product.dateCreated}</p>
+                                <p>Última Atualização: {product.lastUpdated}</p>
                                 <a href={product.link} target="_blank" rel="noopener noreferrer">
                                     Ver Produto
                                 </a>
@@ -128,36 +131,35 @@ export default function Home() {
                 .results ul {
                     display: flex;
                     flex-wrap: wrap;
-                    gap: 10px; 
-                    justify-content: center; 
+                    gap: 10px;
+                    justify-content: center;
                 }
                 .product {
                     background: rgba(255, 255, 255, 0.1);
                     border: 1px solid #333;
                     border-radius: 8px;
                     padding: 15px;
-                    width: 180px; 
+                    width: 220px;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
                     transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
                 }
-                .product img {
-                    border-radius: 6px;
-                    margin-bottom: 10px;
+                .image-carousel {
+                    display: flex;
+                    overflow-x: auto;
+                    gap: 5px;
                     width: 100%;
-                    height: 180px;
-                    object-fit: cover;
+                }
+                .image-carousel img {
+                    width: 100%;
+                    max-width: 220px;
+                    border-radius: 6px;
                 }
                 .product-info {
                     text-align: center;
                     color: #e0e0e0;
-                }
-                .product-dates {
-                    font-size: 0.9em;
-                    color: #bdbdbd;
-                    margin: 5px 0;
                 }
                 .product-price {
                     font-weight: bold;
