@@ -91,7 +91,7 @@ export default function Home() {
             <div className="results">
                 <ul>
                     {products.map((product, index) => {
-                        const currentIndex = currentImageIndexes[index] || 0; // Obter o índice atual da imagem
+                        const currentIndex = currentImageIndexes[index] || 0;
                         return (
                             <li key={index} className="product">
                                 <div className="image-carousel">
@@ -102,7 +102,7 @@ export default function Home() {
                                 <div className="product-info">
                                     <h3>{product.title}</h3>
                                     <p className="product-price">R$ {product.price}</p>
-                                    <p>{product.subtitle}</p> {/* Adicionando a linha para mostrar o subtitle */}
+                                    <p>{product.subtitle}</p>
                                     <p>Quantidade Vendida: {product.soldText}</p>
                                     <p>Criado em: {product.dateCreated}</p>
                                     <p>Última Atualização: {product.lastUpdated}</p>
@@ -182,10 +182,10 @@ export default function Home() {
                     color: #00e5ff;
                 }
                 .image-carousel img {
-                    width: 220px;
-                    height: 220px; /* Altura fixada para uniformidade */
+                    width: 100%;
+                    height: 220px;
                     border-radius: 6px;
-                    object-fit: cover; /* Mantém a proporção da imagem */
+                    object-fit: cover;
                 }
                 .product-info {
                     text-align: center;
@@ -209,4 +209,4 @@ export default function Home() {
             `}</style>
         </div>
     );
-}
+}  
