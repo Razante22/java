@@ -7,7 +7,7 @@ body {
 }
 
 .container {
-  max-width: 1400px; /* Largura ajustada para layout maior */
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -51,7 +51,7 @@ select {
   font-size: 16px;
   border-radius: 8px;
   border: 1px solid #333;
-  width: 300px; /* Ajuste na largura para preencher melhor o layout maior */
+  width: 250px;
   background: #1c1c1c;
   color: #e0e0e0;
   transition: border-color 0.3s, background-color 0.3s;
@@ -95,7 +95,7 @@ button:hover {
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 15px;
   justify-content: center;
 }
 
@@ -103,8 +103,8 @@ button:hover {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid #333;
   border-radius: 8px;
-  padding: 20px; /* Maior padding para destaque visual */
-  width: 320px; /* Largura ajustada */
+  padding: 10px;
+  width: 240px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
   display: flex;
@@ -121,8 +121,8 @@ button:hover {
 .results img {
   border-radius: 6px;
   margin-bottom: 10px;
-  width: 100%;
-  height: 200px; /* Ajuste para manter a resolução */
+  width: 90%;
+  height: 180px;
   object-fit: cover;
 }
 
@@ -134,7 +134,7 @@ button:hover {
 
 .results .product-price {
   font-weight: bold;
-  font-size: 1.2em; /* Ajuste no tamanho da fonte */
+  font-size: 1.1em;
   color: #00e5ff;
   margin-top: 10px;
 }
@@ -167,26 +167,26 @@ button:hover {
 }
 
 .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
 }
 
 .pagination form {
-    margin: 0 5px;
+  margin: 0 5px;
 }
 
 .pagination button {
-    padding: 10px 15px;
-    border-radius: 5px;
-    border: none;
-    background-color: #007bff;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .pagination button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
