@@ -110,6 +110,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: hidden;
 }
 
 .results li:hover {
@@ -121,8 +122,9 @@ button:hover {
 .results img {
   border-radius: 6px;
   margin-bottom: 10px;
-  width: 90%;
-  height: 180px;
+  width: 100%;
+  height: auto;
+  max-height: 180px;
   object-fit: cover;
 }
 
