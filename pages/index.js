@@ -153,7 +153,7 @@ export default function Home() {
                 .results ul {
                     display: flex;
                     flex-wrap: wrap;
-                    gap: 20px;
+                    gap: 30px; /* Aumenta o espaço entre os produtos */
                     justify-content: center;
                 }
                 .product {
@@ -161,7 +161,7 @@ export default function Home() {
                     border: 1px solid #333;
                     border-radius: 8px;
                     padding: 15px;
-                    width: 250px; /* Aumentando a largura dos produtos */
+                    width: 250px; /* Aumenta a largura dos produtos */
                     display: flex;
                     flex-direction: column;
                     align-items: center;
@@ -186,7 +186,7 @@ export default function Home() {
                 }
                 .image-carousel img {
                     width: 100%;
-                    height: 200px; /* Aumentando a altura das imagens */
+                    height: 150px; /* Ajuste a altura das imagens */
                     border-radius: 6px;
                     object-fit: cover;
                 }
