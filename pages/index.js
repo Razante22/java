@@ -77,14 +77,28 @@ export default function Home() {
                     {products.map((product, index) => (
                         <li key={index} className="product">
                             <div className="image-carousel">
-                                {product.images.map((img, idx) => (
-                                    <div className="image-wrapper" key={idx}>
-                                        <img 
-                                            src={img} 
-                                            alt={`Imagem ${idx + 1} de ${product.title}`} 
-                                        />
-                                    </div>
-                                ))}
+                                <button className="carousel-button left" onClick={() => {
+                                    const carousel = document.querySelector(`#carousel-${index}`);
+                                    carousel.scrollLeft -= carousel.offsetWidth;
+                                }}>
+                                    &lt;
+                                </button>
+                                <div className="image-wrapper" id={`carousel-${index}`}>
+                                    {product.images.map((img, idx) => (
+                                        <div className="image-container" key={idx}>
+                                            <img 
+                                                src={img} 
+                                                alt={`Imagem ${idx + 1} de ${product.title}`} 
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                                <button className="carousel-button right" onClick={() => {
+                                    const carousel = document.querySelector(`#carousel-${index}`);
+                                    carousel.scrollLeft += carousel.offsetWidth;
+                                }}>
+                                    &gt;
+                                </button>
                             </div>
                             <div className="product-info">
                                 <h3>{product.title}</h3>
@@ -157,14 +171,40 @@ export default function Home() {
                 }
                 .image-wrapper {
                     display: flex;
+                    transition: scroll 0.3s ease;
+                    overflow-x: auto;
+                    scroll-behavior: smooth;
+                }
+                .image-container {
+                    flex: 0 0 auto;
+                    width: 100%; // ajuste de largura
+                    display: flex;
                     justify-content: center;
                     align-items: center;
-                    cursor: pointer;
                 }
-                .image-wrapper img {
+                .image-container img {
                     width: 100%;
                     height: auto;
                     border-radius: 6px;
+                }
+                .carousel-button {
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: rgba(255, 255, 255, 0.5);
+                    border: none;
+                    cursor: pointer;
+                    font-size: 20px;
+                    color: #333;
+                    z-index: 10;
+                    padding: 10px;
+                    border-radius: 50%;
+                }
+                .carousel-button.left {
+                    left: 10px;
+                }
+                .carousel-button.right {
+                    right: 10px;
                 }
                 .product-info {
                     text-align: center;
