@@ -78,7 +78,12 @@ export default function Home() {
                         <li key={index} className="product">
                             <div className="image-carousel">
                                 {product.images.map((img, idx) => (
-                                    <img key={idx} src={img} alt={Imagem ${idx + 1} de ${product.title}} />
+                                    <div className="image-wrapper" key={idx}>
+                                        <img 
+                                            src={img} 
+                                            alt={`Imagem ${idx + 1} de ${product.title}`} 
+                                        />
+                                    </div>
                                 ))}
                             </div>
                             <div className="product-info">
@@ -110,7 +115,7 @@ export default function Home() {
                 )}
             </div>
 
-            <style jsx>{
+            <style jsx>{`
                 .container {
                     padding: 20px;
                 }
@@ -144,20 +149,22 @@ export default function Home() {
                     flex-direction: column;
                     align-items: center;
                     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-                    transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
                 }
                 .image-carousel {
-                    display: flex;
-                    overflow-x: scroll;
+                    position: relative;
                     width: 100%;
-                    scroll-snap-type: x mandatory;
+                    overflow: hidden;
                 }
-                .image-carousel img {
-                    width: 220px;
+                .image-wrapper {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    cursor: pointer;
+                }
+                .image-wrapper img {
+                    width: 100%;
                     height: auto;
                     border-radius: 6px;
-                    scroll-snap-align: start;
-                    margin-right: 10px;
                 }
                 .product-info {
                     text-align: center;
@@ -178,7 +185,7 @@ export default function Home() {
                     margin: 0 10px;
                     color: #e0e0e0;
                 }
-            }</style>
+            `}</style>
         </div>
     );
 }
