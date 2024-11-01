@@ -26,7 +26,7 @@ export default function Home() {
             setTotalPages(response.data.totalPages);
             setCurrentPage(page);
             setError('');
-            setCurrentImageIndexes({}); // Resetar índices de imagens ao buscar novos produtos
+            setCurrentImageIndexes({});
         } catch (error) {
             console.error('Erro ao buscar produtos:', error);
             setError('Erro ao buscar produtos. Tente novamente.');
@@ -129,84 +129,6 @@ export default function Home() {
                     </button>
                 )}
             </div>
-
-            <style jsx>{`
-                .container {
-                    padding: 20px;
-                }
-                header {
-                    text-align: center;
-                    margin-bottom: 20px;
-                }
-                h1 {
-                    color: #e0e0e0;
-                    margin: 0;
-                }
-                .desktop-search {
-                    margin-bottom: 20px;
-                }
-                .results {
-                    margin-top: 20px;
-                }
-                .results ul {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 10px;
-                    justify-content: center;
-                }
-                .product {
-                    background: rgba(255, 255, 255, 0.1);
-                    border: 1px solid #333;
-                    border-radius: 8px;
-                    padding: 15px;
-                    width: 220px;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-                    transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
-                }
-                .image-carousel {
-                    display: flex;
-                    align-items: center;
-                    width: 100%;
-                }
-                .carousel-button {
-                    background: none;
-                    border: none;
-                    color: #e0e0e0;
-                    font-size: 24px;
-                    cursor: pointer;
-                }
-                .carousel-button:hover {
-                    color: #00e5ff;
-                }
-                .image-carousel img {
-                    width: 100%;
-                    height: 220px;
-                    border-radius: 6px;
-                    object-fit: cover;
-                }
-                .product-info {
-                    text-align: center;
-                    color: #e0e0e0;
-                }
-                .product-price {
-                    font-weight: bold;
-                    color: #00e5ff;
-                    margin-top: 10px;
-                }
-                .pagination {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    margin: 20px 0;
-                }
-                .pagination span {
-                    margin: 0 10px;
-                    color: #e0e0e0;
-                }
-            `}</style>
         </div>
     );
-}  
+}
