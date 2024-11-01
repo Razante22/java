@@ -19,7 +19,7 @@ export default function Home() {
     const handleSearch = async (page = 1) => {
         try {
             const offset = (page - 1) * 10;
-            const response = await axios.get('/api/search.js', {
+            const response = await axios.get('/api/search', {
                 params: { query, sort, offset },
             });
             setProducts(response.data.products);
