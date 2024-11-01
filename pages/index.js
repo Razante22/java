@@ -103,7 +103,8 @@ export default function Home() {
                             <div className="product-info">
                                 <h3>{product.title}</h3>
                                 <p className="product-price">R$ {product.price}</p>
-                                <p>Quantidade Vendida: {product.soldQuantity}</p>
+                                {/* A linha abaixo foi removida */}
+                                {/* <p>Quantidade Vendida: {product.soldQuantity}</p> */}
                                 <p>Criado em: {product.dateCreated}</p>
                                 <p>Última Atualização: {product.lastUpdated}</p>
                                 <a href={product.link} target="_blank" rel="noopener noreferrer">
