@@ -171,9 +171,12 @@ export default function Home() {
                 }
                 .image-wrapper {
                     display: flex;
-                    transition: scroll 0.3s ease;
-                    overflow-x: auto;
-                    scroll-behavior: smooth;
+                    overflow-x: auto; /* Permitir rolagem horizontal */
+                    scroll-behavior: smooth; /* Suavizar a rolagem */
+                    scrollbar-width: none; /* Para Firefox */
+                }
+                .image-wrapper::-webkit-scrollbar {
+                    display: none; /* Para Chrome, Safari e Opera */
                 }
                 .image-container {
                     flex: 0 0 auto;
