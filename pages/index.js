@@ -26,7 +26,7 @@ export default function Home() {
             setTotalPages(response.data.totalPages);
             setCurrentPage(page);
             setError('');
-            setCurrentImageIndexes({});
+            setCurrentImageIndexes({}); // Resetar índices de imagens ao buscar novos produtos
         } catch (error) {
             console.error('Erro ao buscar produtos:', error);
             setError('Erro ao buscar produtos. Tente novamente.');
@@ -91,7 +91,7 @@ export default function Home() {
             <div className="results">
                 <ul>
                     {products.map((product, index) => {
-                        const currentIndex = currentImageIndexes[index] || 0;
+                        const currentIndex = currentImageIndexes[index] || 0; // Obter o índice atual da imagem
                         return (
                             <li key={index} className="product">
                                 <div className="image-carousel">
@@ -102,7 +102,7 @@ export default function Home() {
                                 <div className="product-info">
                                     <h3>{product.title}</h3>
                                     <p className="product-price">R$ {product.price}</p>
-                                    <p>{product.subtitle}</p>
+                                    <p>{product.subtitle}</p> {/* Adicionando a linha para mostrar o subtitle */}
                                     <p>Quantidade Vendida: {product.soldText}</p>
                                     <p>Criado em: {product.dateCreated}</p>
                                     <p>Última Atualização: {product.lastUpdated}</p>
@@ -133,8 +133,6 @@ export default function Home() {
             <style jsx>{`
                 .container {
                     padding: 20px;
-                    max-width: 1200px; /* Adiciona limite de largura ao contêiner */
-                    margin: 0 auto; /* Centraliza o contêiner */
                 }
                 header {
                     text-align: center;
@@ -153,7 +151,7 @@ export default function Home() {
                 .results ul {
                     display: flex;
                     flex-wrap: wrap;
-                    gap: 30px; /* Aumenta o espaço entre os produtos */
+                    gap: 10px;
                     justify-content: center;
                 }
                 .product {
@@ -161,7 +159,7 @@ export default function Home() {
                     border: 1px solid #333;
                     border-radius: 8px;
                     padding: 15px;
-                    width: 250px; /* Aumenta a largura dos produtos */
+                    width: 220px;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
@@ -177,18 +175,17 @@ export default function Home() {
                     background: none;
                     border: none;
                     color: #e0e0e0;
-                    font-size: 16px;
-                    padding: 2px 6px;
+                    font-size: 24px;
                     cursor: pointer;
                 }
                 .carousel-button:hover {
                     color: #00e5ff;
                 }
                 .image-carousel img {
-                    width: 100%;
-                    height: 150px; /* Ajuste a altura das imagens */
+                    width: 220px;
+                    height: 220px; /* Altura fixada para uniformidade */
                     border-radius: 6px;
-                    object-fit: cover;
+                    object-fit: cover; /* Mantém a proporção da imagem */
                 }
                 .product-info {
                     text-align: center;
@@ -212,4 +209,4 @@ export default function Home() {
             `}</style>
         </div>
     );
-}
+}  
