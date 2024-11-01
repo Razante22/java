@@ -133,6 +133,8 @@ export default function Home() {
             <style jsx>{`
                 .container {
                     padding: 20px;
+                    max-width: 1200px; /* Adiciona limite de largura ao contêiner */
+                    margin: 0 auto; /* Centraliza o contêiner */
                 }
                 header {
                     text-align: center;
@@ -159,7 +161,7 @@ export default function Home() {
                     border: 1px solid #333;
                     border-radius: 8px;
                     padding: 15px;
-                    width: 220px;
+                    width: 200px; /* Ajuste a largura dos produtos */
                     display: flex;
                     flex-direction: column;
                     align-items: center;
@@ -184,7 +186,7 @@ export default function Home() {
                 }
                 .image-carousel img {
                     width: 100%;
-                    height: 180px;
+                    height: 150px; /* Ajuste a altura das imagens */
                     border-radius: 6px;
                     object-fit: cover;
                 }
