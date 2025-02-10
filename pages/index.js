@@ -85,10 +85,10 @@ export default function Home() {
                             <label>
                                 <input
                                     type="checkbox"
-                                    checked={maxAge === 60}
-                                    onChange={(e) => setMaxAge(e.target.checked ? 60 : 0)}
+                                    checked={maxAge === 90} // Alterado para 90 dias
+                                    onChange={(e) => setMaxAge(e.target.checked ? 90 : 0)} // Alterado para 90 dias
                                 />
-                                Menos de 60 dias
+                                Menos de 90 dias
                             </label>
                         </div>
                         <button type="submit">Buscar</button>
