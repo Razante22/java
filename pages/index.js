@@ -117,6 +117,7 @@ export default function Home() {
                                                 <img 
                                                     src={img} 
                                                     alt={`Imagem ${idx + 1} de ${product.title}`} 
+                                                    className="product-image"
                                                 />
                                             </div>
                                         ))}
@@ -132,7 +133,7 @@ export default function Home() {
                                     <h3>{product.title}</h3>
                                     <p className="product-price">R$ {product.price}</p>
                                     <p>Quantidade Vendida: {product.soldQuantity}</p>
-                                    <p>Criado em: {product.dateCreated}</p> {/* Data de criação mantida */}
+                                    <p>Criado em: {product.dateCreated}</p>
                                     <p>Última Atualização: {product.lastUpdated}</p>
                                     <a href={product.link} target="_blank" rel="noopener noreferrer">
                                         Ver Produto
@@ -234,6 +235,7 @@ export default function Home() {
                     position: relative;
                     width: 100%;
                     overflow: hidden;
+                    margin-bottom: 10px;
                 }
                 .image-wrapper {
                     display: flex;
@@ -246,15 +248,20 @@ export default function Home() {
                 }
                 .image-container {
                     flex: 0 0 auto;
-                    width: 100%;
+                    width: 200px;
+                    height: 200px;
                     display: flex;
                     justify-content: center;
                     align-items: center;
+                    background: #f0f0f0;
+                    border-radius: 8px;
+                    margin-right: 10px;
                 }
-                .image-container img {
+                .product-image {
                     width: 100%;
-                    height: auto;
-                    border-radius: 6px;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 8px;
                 }
                 .carousel-button {
                     position: absolute;
