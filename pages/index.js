@@ -10,6 +10,7 @@ export default function Home() {
     const [totalPages, setTotalPages] = useState(0);
     const [error, setError] = useState('');
     const [isMobile, setIsMobile] = useState(false);
+    const [maxAge, setMaxAge] = useState(0); // Novo estado para filtro de tempo
 
     const checkMobile = () => {
         setIsMobile(window.innerWidth <= 768);
@@ -19,7 +20,12 @@ export default function Home() {
         try {
             const offset = (page - 1) * 10;
             const response = await axios.get('/api/search', {
-                params: { query, sort, offset },
+                params: { 
+                    query, 
+                    sort, 
+                    offset,
+                    maxAge // Adicionando o novo parâmetro
+                },
             });
             setProducts(response.data.products);
             setTotalPages(response.data.totalPages);
@@ -37,6 +43,13 @@ export default function Home() {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
+    // Função para calcular dias desde a criação
+    const daysSinceCreation = (dateString) => {
+        const createdDate = new Date(dateString);
+        const today = new Date();
+        return Math.floor((today - createdDate) / (1000 * 60 * 60 * 24));
+    };
+
     return (
         <div className="container">
             <header>
@@ -49,7 +62,9 @@ export default function Home() {
                     query={query} 
                     setQuery={setQuery} 
                     sort={sort} 
-                    setSort={setSort} 
+                    setSort={setSort}
+                    maxAge={maxAge}
+                    setMaxAge={setMaxAge}
                 />
             ) : (
                 <div className="desktop-search">
@@ -62,9 +77,20 @@ export default function Home() {
                         />
                         <select value={sort} onChange={(e) => setSort(e.target.value)}>
                             <option value="relevance">Mais Vendidos</option>
+                            <option value="sold_asc">Menos Vendidos</option>
                             <option value="price_asc">Menor Preço</option>
                             <option value="price_desc">Maior Preço</option>
                         </select>
+                        <div className="age-filter">
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={maxAge === 60}
+                                    onChange={(e) => setMaxAge(e.target.checked ? 60 : 0)}
+                                />
+                                Menos de 60 dias
+                            </label>
+                        </div>
                         <button type="submit">Buscar</button>
                     </form>
                 </div>
@@ -74,46 +100,46 @@ export default function Home() {
 
             <div className="results">
                 <ul>
-                    {products.map((product, index) => (
-                        <li key={index} className="product">
-                            <div className="image-carousel">
-                                <button className="carousel-button left" onClick={() => {
-                                    const carousel = document.querySelector(`#carousel-${index}`);
-                                    carousel.scrollLeft -= carousel.offsetWidth;
-                                }}>
-                                    &lt;
-                                </button>
-                                <div className="image-wrapper" id={`carousel-${index}`}>
-                                    {product.images.map((img, idx) => (
-                                        <div className="image-container" key={idx}>
-                                            <img 
-                                                src={img} 
-                                                alt={`Imagem ${idx + 1} de ${product.title}`} 
-                                            />
-                                        </div>
-                                    ))}
+                    {products
+                        .filter(product => daysSinceCreation(product.dateCreated) < maxAge || maxAge === 0)
+                        .map((product, index) => (
+                            <li key={index} className="product">
+                                <div className="image-carousel">
+                                    <button className="carousel-button left" onClick={() => {
+                                        const carousel = document.querySelector(`#carousel-${index}`);
+                                        carousel.scrollLeft -= carousel.offsetWidth;
+                                    }}>
+                                        &lt;
+                                    </button>
+                                    <div className="image-wrapper" id={`carousel-${index}`}>
+                                        {product.images.map((img, idx) => (
+                                            <div className="image-container" key={idx}>
+                                                <img 
+                                                    src={img} 
+                                                    alt={`Imagem ${idx + 1} de ${product.title}`} 
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <button className="carousel-button right" onClick={() => {
+                                        const carousel = document.querySelector(`#carousel-${index}`);
+                                        carousel.scrollLeft += carousel.offsetWidth;
+                                    }}>
+                                        &gt;
+                                    </button>
                                 </div>
-                                <button className="carousel-button right" onClick={() => {
-                                    const carousel = document.querySelector(`#carousel-${index}`);
-                                    carousel.scrollLeft += carousel.offsetWidth;
-                                }}>
-                                    &gt;
-                                </button>
-                            </div>
-                            <div className="product-info">
-                                <h3>{product.title}</h3>
-                                <p className="product-price">R$ {product.price}</p>
-                                <p>Quantidade Vendida: {product.soldQuantity}</p>
-                                {/* A linha abaixo foi removida */}
-                                {/* <p>Quantidade Vendida: {product.soldQuantity}</p> */}
-                                <p>Criado em: {product.dateCreated}</p>
-                                <p>Última Atualização: {product.lastUpdated}</p>
-                                <a href={product.link} target="_blank" rel="noopener noreferrer">
-                                    Ver Produto
-                                </a>
-                            </div>
-                        </li>
-                    ))}
+                                <div className="product-info">
+                                    <h3>{product.title}</h3>
+                                    <p className="product-price">R$ {product.price}</p>
+                                    <p>Quantidade Vendida: {product.soldQuantity}</p>
+                                    <p>Dias desde criação: {daysSinceCreation(product.dateCreated)}</p>
+                                    <p>Última Atualização: {product.lastUpdated}</p>
+                                    <a href={product.link} target="_blank" rel="noopener noreferrer">
+                                        Ver Produto
+                                    </a>
+                                </div>
+                            </li>
+                        ))}
                 </ul>
             </div>
 
@@ -146,6 +172,44 @@ export default function Home() {
                 .desktop-search {
                     margin-bottom: 20px;
                 }
+                .desktop-search form {
+                    display: flex;
+                    gap: 10px;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .desktop-search input {
+                    padding: 8px;
+                    border-radius: 4px;
+                    border: 1px solid #555;
+                    background: #333;
+                    color: white;
+                }
+                .desktop-search select {
+                    padding: 8px;
+                    border-radius: 4px;
+                    background: #333;
+                    color: white;
+                    border: 1px solid #555;
+                }
+                .desktop-search button {
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    background: #00e5ff;
+                    color: black;
+                    border: none;
+                    cursor: pointer;
+                }
+                .age-filter {
+                    margin: 10px 0;
+                    color: #e0e0e0;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+                .age-filter input {
+                    margin-right: 5px;
+                }
                 .results {
                     margin-top: 20px;
                 }
@@ -173,16 +237,16 @@ export default function Home() {
                 }
                 .image-wrapper {
                     display: flex;
-                    overflow-x: auto; /* Permitir rolagem horizontal */
-                    scroll-behavior: smooth; /* Suavizar a rolagem */
-                    scrollbar-width: none; /* Para Firefox */
+                    overflow-x: auto;
+                    scroll-behavior: smooth;
+                    scrollbar-width: none;
                 }
                 .image-wrapper::-webkit-scrollbar {
-                    display: none; /* Para Chrome, Safari e Opera */
+                    display: none;
                 }
                 .image-container {
                     flex: 0 0 auto;
-                    width: 100%; // ajuste de largura
+                    width: 100%;
                     display: flex;
                     justify-content: center;
                     align-items: center;
@@ -229,6 +293,14 @@ export default function Home() {
                 .pagination span {
                     margin: 0 10px;
                     color: #e0e0e0;
+                }
+                .pagination button {
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    background: #00e5ff;
+                    color: black;
+                    border: none;
+                    cursor: pointer;
                 }
             `}</style>
         </div>
