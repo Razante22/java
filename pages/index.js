@@ -132,7 +132,7 @@ export default function Home() {
                                     <h3>{product.title}</h3>
                                     <p className="product-price">R$ {product.price}</p>
                                     <p>Quantidade Vendida: {product.soldQuantity}</p>
-                                    <p>Dias desde criação: {daysSinceCreation(product.dateCreated)}</p>
+                                    <p>Criado em: {product.dateCreated}</p> {/* Data de criação mantida */}
                                     <p>Última Atualização: {product.lastUpdated}</p>
                                     <a href={product.link} target="_blank" rel="noopener noreferrer">
                                         Ver Produto
