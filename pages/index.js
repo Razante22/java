@@ -78,23 +78,23 @@ export default function Home() {
                         <li key={index} className="product">
                             <div className="image-carousel">
                                 <button className="carousel-button left" onClick={() => {
-                                    const carousel = document.querySelector(#carousel-${index});
+                                    const carousel = document.querySelector(`#carousel-${index}`);
                                     carousel.scrollLeft -= carousel.offsetWidth;
                                 }}>
                                     &lt;
                                 </button>
-                                <div className="image-wrapper" id={carousel-${index}}>
+                                <div className="image-wrapper" id={`carousel-${index}`}>
                                     {product.images.map((img, idx) => (
                                         <div className="image-container" key={idx}>
                                             <img 
                                                 src={img} 
-                                                alt={Imagem ${idx + 1} de ${product.title}} 
+                                                alt={`Imagem ${idx + 1} de ${product.title}`} 
                                             />
                                         </div>
                                     ))}
                                 </div>
                                 <button className="carousel-button right" onClick={() => {
-                                    const carousel = document.querySelector(#carousel-${index});
+                                    const carousel = document.querySelector(`#carousel-${index}`);
                                     carousel.scrollLeft += carousel.offsetWidth;
                                 }}>
                                     &gt;
@@ -103,6 +103,7 @@ export default function Home() {
                             <div className="product-info">
                                 <h3>{product.title}</h3>
                                 <p className="product-price">R$ {product.price}</p>
+                                <p>Quantidade Vendida: {product.soldQuantity}</p>
                                 {/* A linha abaixo foi removida */}
                                 {/* <p>Quantidade Vendida: {product.soldQuantity}</p> */}
                                 <p>Criado em: {product.dateCreated}</p>
@@ -130,7 +131,7 @@ export default function Home() {
                 )}
             </div>
 
-            <style jsx>{
+            <style jsx>{`
                 .container {
                     padding: 20px;
                 }
@@ -229,7 +230,7 @@ export default function Home() {
                     margin: 0 10px;
                     color: #e0e0e0;
                 }
-            }</style>
+            `}</style>
         </div>
     );
-}  
+}
