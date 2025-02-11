@@ -11,29 +11,78 @@ export default function Home() {
     const [error, setError] = useState('');
     const [isMobile, setIsMobile] = useState(false);
     const [maxAge, setMaxAge] = useState(0); // Novo estado para filtro de tempo
+    const [isLoading, setIsLoading] = useState(false); // Estado para carregamento
 
     const checkMobile = () => {
         setIsMobile(window.innerWidth <= 768);
     };
 
+    // Função para buscar produtos no Mercado Livre
     const handleSearch = async (page = 1) => {
+        setIsLoading(true);
         try {
+            // Define a categoria com base na opção selecionada
+            let categoryDescription = '';
+            switch (sort) {
+                case 'relevance':
+                    categoryDescription = 'mais vendidos';
+                    break;
+                case 'sold_asc':
+                    categoryDescription = 'menos vendidos';
+                    break;
+                case 'price_asc':
+                    categoryDescription = 'menor preço';
+                    break;
+                case 'price_desc':
+                    categoryDescription = 'maior preço';
+                    break;
+                default:
+                    categoryDescription = 'relevância';
+            }
+
+            // Consulta a API do DeepSeek para refinar a pesquisa com base na categoria
+            const deepseekResponse = await axios.post(
+                'https://api.deepseek.com/v1/chat/completions',
+                {
+                    model: 'deepseek-chat',
+                    messages: [
+                        {
+                            role: 'user',
+                            content: `Refine a pesquisa "${query}" para encontrar produtos no Mercado Livre, priorizando ${categoryDescription}. Retorne apenas termos de busca melhorados.`,
+                        },
+                    ],
+                },
+                {
+                    headers: {
+                        'Authorization': `Bearer sk-93980c6457614d3ba3b59d456ab0a5ba`, // Sua API Key do DeepSeek
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+
+            // Extrai os termos de busca refinados da resposta do DeepSeek
+            const refinedQuery = deepseekResponse.data.choices[0].message.content;
+
+            // Agora, busca os produtos no Mercado Livre usando os termos refinados
             const offset = (page - 1) * 10;
-            const response = await axios.get('/api/search', {
+            const mercadoLivreResponse = await axios.get('/api/search', {
                 params: { 
-                    query, 
+                    query: refinedQuery, // Usa a pesquisa refinada
                     sort, 
                     offset,
-                    maxAge // Adicionando o novo parâmetro
+                    maxAge,
                 },
             });
-            setProducts(response.data.products);
-            setTotalPages(response.data.totalPages);
+
+            setProducts(mercadoLivreResponse.data.products);
+            setTotalPages(mercadoLivreResponse.data.totalPages);
             setCurrentPage(page);
             setError('');
         } catch (error) {
             console.error('Erro ao buscar produtos:', error);
             setError('Erro ao buscar produtos. Tente novamente.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -85,13 +134,15 @@ export default function Home() {
                             <label>
                                 <input
                                     type="checkbox"
-                                    checked={maxAge === 90} // Alterado para 90 dias
-                                    onChange={(e) => setMaxAge(e.target.checked ? 90 : 0)} // Alterado para 90 dias
+                                    checked={maxAge === 90}
+                                    onChange={(e) => setMaxAge(e.target.checked ? 90 : 0)}
                                 />
                                 Menos de 90 dias
                             </label>
                         </div>
-                        <button type="submit">Buscar</button>
+                        <button type="submit" disabled={isLoading}>
+                            {isLoading ? 'Buscando...' : 'Buscar'}
+                        </button>
                     </form>
                 </div>
             )}
