@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import OpenAI from 'openai'; // Importe o SDK do OpenAI
 import MobileSearch from './MobileSearch';
+
+// Configuração do cliente OpenAI (DeepSeek)
+const openai = new OpenAI({
+    baseURL: 'https://api.deepseek.com',
+    apiKey: 'sk-93980c6457614d3ba3b59d456ab0a5ba', // Sua API Key do DeepSeek
+});
 
 export default function Home() {
     const [query, setQuery] = useState('');
@@ -11,12 +18,16 @@ export default function Home() {
     const [error, setError] = useState('');
     const [isMobile, setIsMobile] = useState(false);
     const [maxAge, setMaxAge] = useState(0); // Novo estado para filtro de tempo
+    const [isLoading, setIsLoading] = useState(false); // Estado para carregamento
+    const [assistantResponse, setAssistantResponse] = useState(''); // Resposta do assistente
 
     const checkMobile = () => {
         setIsMobile(window.innerWidth <= 768);
     };
 
+    // Função para buscar produtos no Mercado Livre
     const handleSearch = async (page = 1) => {
+        setIsLoading(true);
         try {
             const offset = (page - 1) * 10;
             const response = await axios.get('/api/search', {
@@ -24,9 +35,10 @@ export default function Home() {
                     query, 
                     sort, 
                     offset,
-                    maxAge // Adicionando o novo parâmetro
+                    maxAge,
                 },
             });
+
             setProducts(response.data.products);
             setTotalPages(response.data.totalPages);
             setCurrentPage(page);
@@ -34,6 +46,30 @@ export default function Home() {
         } catch (error) {
             console.error('Erro ao buscar produtos:', error);
             setError('Erro ao buscar produtos. Tente novamente.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Função para consultar o assistente (DeepSeek Chat)
+    const consultAssistant = async () => {
+        setIsLoading(true);
+        try {
+            const completion = await openai.chat.completions.create({
+                messages: [
+                    { role: "system", content: "Você é um assistente útil que ajuda a refinar pesquisas de produtos no Mercado Livre." },
+                    { role: "user", content: `Me ajude a encontrar produtos no Mercado Livre com base na pesquisa "${query}". Sugira termos de busca ou categorias como mais vendidos, menos vendidos, menor preço, etc.` },
+                ],
+                model: "deepseek-chat",
+            });
+
+            // Define a resposta do assistente
+            setAssistantResponse(completion.choices[0].message.content);
+        } catch (error) {
+            console.error('Erro ao consultar o assistente:', error);
+            setError('Erro ao consultar o assistente. Tente novamente.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -85,18 +121,36 @@ export default function Home() {
                             <label>
                                 <input
                                     type="checkbox"
-                                    checked={maxAge === 90} // Alterado para 90 dias
-                                    onChange={(e) => setMaxAge(e.target.checked ? 90 : 0)} // Alterado para 90 dias
+                                    checked={maxAge === 90}
+                                    onChange={(e) => setMaxAge(e.target.checked ? 90 : 0)}
                                 />
                                 Menos de 90 dias
                             </label>
                         </div>
-                        <button type="submit">Buscar</button>
+                        <button type="submit" disabled={isLoading}>
+                            {isLoading ? 'Buscando...' : 'Buscar'}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={consultAssistant}
+                            disabled={isLoading}
+                            className="assistant-button"
+                        >
+                            Consultar Assistente
+                        </button>
                     </form>
                 </div>
             )}
 
             {error && <div className="error">{error}</div>}
+
+            {/* Resposta do Assistente */}
+            {assistantResponse && (
+                <div className="assistant-response">
+                    <h3>Sugestão do Assistente:</h3>
+                    <p>{assistantResponse}</p>
+                </div>
+            )}
 
             <div className="results">
                 <ul>
@@ -200,6 +254,10 @@ export default function Home() {
                     color: black;
                     border: none;
                     cursor: pointer;
+                }
+                .desktop-search .assistant-button {
+                    background: #ffcc00;
+                    color: black;
                 }
                 .age-filter {
                     margin: 10px 0;
@@ -308,6 +366,16 @@ export default function Home() {
                     color: black;
                     border: none;
                     cursor: pointer;
+                }
+                .assistant-response {
+                    margin-top: 20px;
+                    padding: 15px;
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 8px;
+                    color: #e0e0e0;
+                }
+                .assistant-response h3 {
+                    margin-top: 0;
                 }
             `}</style>
         </div>
