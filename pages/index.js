@@ -10,75 +10,30 @@ export default function Home() {
     const [totalPages, setTotalPages] = useState(0);
     const [error, setError] = useState('');
     const [isMobile, setIsMobile] = useState(false);
-    const [maxAge, setMaxAge] = useState(0);
-    const [isLoading, setIsLoading] = useState(false);
+    const [maxAge, setMaxAge] = useState(0); // Novo estado para filtro de tempo
 
     const checkMobile = () => {
         setIsMobile(window.innerWidth <= 768);
     };
 
     const handleSearch = async (page = 1) => {
-        setIsLoading(true);
         try {
-            let categoryDescription = '';
-            switch (sort) {
-                case 'relevance':
-                    categoryDescription = 'mais vendidos';
-                    break;
-                case 'sold_asc':
-                    categoryDescription = 'menos vendidos';
-                    break;
-                case 'price_asc':
-                    categoryDescription = 'menor preço';
-                    break;
-                case 'price_desc':
-                    categoryDescription = 'maior preço';
-                    break;
-                default:
-                    categoryDescription = 'relevância';
-            }
-
-            const deepseekResponse = await axios.post(
-                'https://api.deepseek.com/v1/chat/completions',
-                {
-                    model: 'deepseek-chat',
-                    messages: [
-                        {
-                            role: 'user',
-                            content: `Refine a pesquisa "${query}" para encontrar produtos no Mercado Livre, priorizando ${categoryDescription}. Retorne apenas termos de busca melhorados.`,
-                        },
-                    ],
-                },
-                {
-                    headers: {
-                        'Authorization': `Bearer sk-8bbfaf34376f41ddb69ddc357dbb7aaa`,
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
-
-            const refinedQuery = deepseekResponse.data.choices?.[0]?.message?.content?.trim();
-            if (!refinedQuery) throw new Error('Falha ao refinar a pesquisa.');
-
             const offset = (page - 1) * 10;
-            const mercadoLivreResponse = await axios.get('/api/search', {
-                params: {
-                    query: refinedQuery,
-                    sort,
+            const response = await axios.get('/api/search', {
+                params: { 
+                    query, 
+                    sort, 
                     offset,
-                    maxAge,
+                    maxAge // Adicionando o novo parâmetro
                 },
             });
-
-            setProducts(mercadoLivreResponse.data.products);
-            setTotalPages(mercadoLivreResponse.data.totalPages);
+            setProducts(response.data.products);
+            setTotalPages(response.data.totalPages);
             setCurrentPage(page);
             setError('');
         } catch (error) {
             console.error('Erro ao buscar produtos:', error);
             setError('Erro ao buscar produtos. Tente novamente.');
-        } finally {
-            setIsLoading(false);
         }
     };
 
@@ -88,12 +43,122 @@ export default function Home() {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
+    // Função para calcular dias desde a criação
+    const daysSinceCreation = (dateString) => {
+        const createdDate = new Date(dateString);
+        const today = new Date();
+        return Math.floor((today - createdDate) / (1000 * 60 * 60 * 24));
+    };
+
     return (
         <div className="container">
             <header>
                 <h1>Buscador de Produtos do Mercado Livre</h1>
             </header>
-            <style jsx>{
+
+            {isMobile ? (
+                <MobileSearch 
+                    handleSearch={handleSearch} 
+                    query={query} 
+                    setQuery={setQuery} 
+                    sort={sort} 
+                    setSort={setSort}
+                    maxAge={maxAge}
+                    setMaxAge={setMaxAge}
+                />
+            ) : (
+                <div className="desktop-search">
+                    <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }}>
+                        <input
+                            type="text"
+                            placeholder="Digite o nome do produto"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                        />
+                        <select value={sort} onChange={(e) => setSort(e.target.value)}>
+                            <option value="relevance">Mais Vendidos</option>
+                            <option value="sold_asc">Menos Vendidos</option>
+                            <option value="price_asc">Menor Preço</option>
+                            <option value="price_desc">Maior Preço</option>
+                        </select>
+                        <div className="age-filter">
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={maxAge === 90} // Alterado para 90 dias
+                                    onChange={(e) => setMaxAge(e.target.checked ? 90 : 0)} // Alterado para 90 dias
+                                />
+                                Menos de 90 dias
+                            </label>
+                        </div>
+                        <button type="submit">Buscar</button>
+                    </form>
+                </div>
+            )}
+
+            {error && <div className="error">{error}</div>}
+
+            <div className="results">
+                <ul>
+                    {products
+                        .filter(product => daysSinceCreation(product.dateCreated) < maxAge || maxAge === 0)
+                        .map((product, index) => (
+                            <li key={index} className="product">
+                                <div className="image-carousel">
+                                    <button className="carousel-button left" onClick={() => {
+                                        const carousel = document.querySelector(`#carousel-${index}`);
+                                        carousel.scrollLeft -= carousel.offsetWidth;
+                                    }}>
+                                        &lt;
+                                    </button>
+                                    <div className="image-wrapper" id={`carousel-${index}`}>
+                                        {product.images.map((img, idx) => (
+                                            <div className="image-container" key={idx}>
+                                                <img 
+                                                    src={img} 
+                                                    alt={`Imagem ${idx + 1} de ${product.title}`} 
+                                                    className="product-image"
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <button className="carousel-button right" onClick={() => {
+                                        const carousel = document.querySelector(`#carousel-${index}`);
+                                        carousel.scrollLeft += carousel.offsetWidth;
+                                    }}>
+                                        &gt;
+                                    </button>
+                                </div>
+                                <div className="product-info">
+                                    <h3>{product.title}</h3>
+                                    <p className="product-price">R$ {product.price}</p>
+                                    <p>Quantidade Vendida: {product.soldQuantity}</p>
+                                    <p>Criado em: {product.dateCreated}</p>
+                                    <p>Última Atualização: {product.lastUpdated}</p>
+                                    <a href={product.link} target="_blank" rel="noopener noreferrer">
+                                        Ver Produto
+                                    </a>
+                                </div>
+                            </li>
+                        ))}
+                </ul>
+            </div>
+
+            <div className="pagination">
+                {currentPage > 1 && (
+                    <button onClick={() => handleSearch(currentPage - 1)}>
+                        Página Anterior
+                    </button>
+                )}
+                <span>Página {currentPage} de {totalPages}</span>
+                {currentPage < totalPages && (
+                    <button onClick={() => handleSearch(currentPage + 1)}>
+                        Próxima Página
+                    </button>
+                )}
+            </div>
+
+            <style jsx>{`
                 .container {
                     padding: 20px;
                 }
@@ -244,7 +309,7 @@ export default function Home() {
                     border: none;
                     cursor: pointer;
                 }
-            }</style>
+            `}</style>
         </div>
     );
 }
