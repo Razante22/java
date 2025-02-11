@@ -10,18 +10,16 @@ export default function Home() {
     const [totalPages, setTotalPages] = useState(0);
     const [error, setError] = useState('');
     const [isMobile, setIsMobile] = useState(false);
-    const [maxAge, setMaxAge] = useState(0); // Novo estado para filtro de tempo
-    const [isLoading, setIsLoading] = useState(false); // Estado para carregamento
+    const [maxAge, setMaxAge] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
 
     const checkMobile = () => {
         setIsMobile(window.innerWidth <= 768);
     };
 
-    // Função para buscar produtos no Mercado Livre
     const handleSearch = async (page = 1) => {
         setIsLoading(true);
         try {
-            // Define a categoria com base na opção selecionada
             let categoryDescription = '';
             switch (sort) {
                 case 'relevance':
@@ -40,7 +38,6 @@ export default function Home() {
                     categoryDescription = 'relevância';
             }
 
-            // Consulta a API do DeepSeek para refinar a pesquisa com base na categoria
             const deepseekResponse = await axios.post(
                 'https://api.deepseek.com/v1/chat/completions',
                 {
@@ -54,21 +51,20 @@ export default function Home() {
                 },
                 {
                     headers: {
-                        'Authorization': `Bearer sk-93980c6457614d3ba3b59d456ab0a5ba`, // Sua API Key do DeepSeek
+                        'Authorization': `Bearer sk-8bbfaf34376f41ddb69ddc357dbb7aaa`,
                         'Content-Type': 'application/json',
                     },
                 }
             );
 
-            // Extrai os termos de busca refinados da resposta do DeepSeek
-            const refinedQuery = deepseekResponse.data.choices[0].message.content;
+            const refinedQuery = deepseekResponse.data.choices?.[0]?.message?.content?.trim();
+            if (!refinedQuery) throw new Error('Falha ao refinar a pesquisa.');
 
-            // Agora, busca os produtos no Mercado Livre usando os termos refinados
             const offset = (page - 1) * 10;
             const mercadoLivreResponse = await axios.get('/api/search', {
-                params: { 
-                    query: refinedQuery, // Usa a pesquisa refinada
-                    sort, 
+                params: {
+                    query: refinedQuery,
+                    sort,
                     offset,
                     maxAge,
                 },
@@ -92,124 +88,12 @@ export default function Home() {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    // Função para calcular dias desde a criação
-    const daysSinceCreation = (dateString) => {
-        const createdDate = new Date(dateString);
-        const today = new Date();
-        return Math.floor((today - createdDate) / (1000 * 60 * 60 * 24));
-    };
-
     return (
         <div className="container">
             <header>
                 <h1>Buscador de Produtos do Mercado Livre</h1>
             </header>
-
-            {isMobile ? (
-                <MobileSearch 
-                    handleSearch={handleSearch} 
-                    query={query} 
-                    setQuery={setQuery} 
-                    sort={sort} 
-                    setSort={setSort}
-                    maxAge={maxAge}
-                    setMaxAge={setMaxAge}
-                />
-            ) : (
-                <div className="desktop-search">
-                    <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }}>
-                        <input
-                            type="text"
-                            placeholder="Digite o nome do produto"
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                        />
-                        <select value={sort} onChange={(e) => setSort(e.target.value)}>
-                            <option value="relevance">Mais Vendidos</option>
-                            <option value="sold_asc">Menos Vendidos</option>
-                            <option value="price_asc">Menor Preço</option>
-                            <option value="price_desc">Maior Preço</option>
-                        </select>
-                        <div className="age-filter">
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    checked={maxAge === 90}
-                                    onChange={(e) => setMaxAge(e.target.checked ? 90 : 0)}
-                                />
-                                Menos de 90 dias
-                            </label>
-                        </div>
-                        <button type="submit" disabled={isLoading}>
-                            {isLoading ? 'Buscando...' : 'Buscar'}
-                        </button>
-                    </form>
-                </div>
-            )}
-
-            {error && <div className="error">{error}</div>}
-
-            <div className="results">
-                <ul>
-                    {products
-                        .filter(product => daysSinceCreation(product.dateCreated) < maxAge || maxAge === 0)
-                        .map((product, index) => (
-                            <li key={index} className="product">
-                                <div className="image-carousel">
-                                    <button className="carousel-button left" onClick={() => {
-                                        const carousel = document.querySelector(`#carousel-${index}`);
-                                        carousel.scrollLeft -= carousel.offsetWidth;
-                                    }}>
-                                        &lt;
-                                    </button>
-                                    <div className="image-wrapper" id={`carousel-${index}`}>
-                                        {product.images.map((img, idx) => (
-                                            <div className="image-container" key={idx}>
-                                                <img 
-                                                    src={img} 
-                                                    alt={`Imagem ${idx + 1} de ${product.title}`} 
-                                                    className="product-image"
-                                                />
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <button className="carousel-button right" onClick={() => {
-                                        const carousel = document.querySelector(`#carousel-${index}`);
-                                        carousel.scrollLeft += carousel.offsetWidth;
-                                    }}>
-                                        &gt;
-                                    </button>
-                                </div>
-                                <div className="product-info">
-                                    <h3>{product.title}</h3>
-                                    <p className="product-price">R$ {product.price}</p>
-                                    <p>Quantidade Vendida: {product.soldQuantity}</p>
-                                    <p>Criado em: {product.dateCreated}</p>
-                                    <p>Última Atualização: {product.lastUpdated}</p>
-                                    <a href={product.link} target="_blank" rel="noopener noreferrer">
-                                        Ver Produto
-                                    </a>
-                                </div>
-                            </li>
-                        ))}
-                </ul>
-            </div>
-
-            <div className="pagination">
-                {currentPage > 1 && (
-                    <button onClick={() => handleSearch(currentPage - 1)}>
-                        Página Anterior
-                    </button>
-                )}
-                <span>Página {currentPage} de {totalPages}</span>
-                {currentPage < totalPages && (
-                    <button onClick={() => handleSearch(currentPage + 1)}>
-                        Próxima Página
-                    </button>
-                )}
-            </div>
-
-            <style jsx>{`
+            <style jsx>{
                 .container {
                     padding: 20px;
                 }
@@ -360,7 +244,7 @@ export default function Home() {
                     border: none;
                     cursor: pointer;
                 }
-            `}</style>
+            }</style>
         </div>
     );
 }
